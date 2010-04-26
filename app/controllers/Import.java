@@ -16,9 +16,6 @@ import play.mvc.Controller;
 public class Import extends Controller {
 
     public static void mediapost() throws FileNotFoundException, IOException {
-        Way.deleteAll();
-        City.deleteAll();
-
         File mediapostFile = Play.getFile("data/hffvnn85.tri");
         BufferedReader  mediapostBr = new BufferedReader(new FileReader(mediapostFile));
         String line;
