@@ -6,9 +6,18 @@ import play.mvc.Controller;
 
 public class Cities extends Controller {
 
-    public static void search(String search) {
+    public static void search(String callback, String search) {
+        if(search == null) {
+            response.status = 400;
+            renderJSON("{message: \"The parameter 'search' is required.\"}");
+        }
         List<City> cities = City.search(search);
-        renderJSON(City.toJson(cities));
+        String jsonResult = City.toJson(cities);
+        if(callback != null) {
+          response.contentType = "text/javascript";
+          renderText(callback + "(" + jsonResult + ")");
+        }
+        renderJSON(jsonResult);
     }
 
 }

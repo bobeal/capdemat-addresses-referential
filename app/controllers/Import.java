@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 import models.Way;
 import models.City;
 import play.Logger;

@@ -9,19 +9,16 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import play.db.jpa.Model;
 import play.templates.JavaExtensions;
 
 @Entity
-@Table(uniqueConstraints=@UniqueConstraint(columnNames="inseeCode"))
 public class City extends Model {
 
     @OneToMany(mappedBy="city", cascade=CascadeType.ALL)
     public List<Way> ways;
 
-    @Column(length=5)
+    @Column(length=5, unique=true)
     public String inseeCode;
 
     @Column(length=5)
@@ -32,7 +29,7 @@ public class City extends Model {
 
     public static List<City> search(String search) {
         String cleanSearch = JavaExtensions.noAccents(search).toUpperCase();
-        return City.find("postalCode = ? OR name LIKE ? order by name", cleanSearch, "%"+cleanSearch+"%").fetch(20);
+        return City.find("postalCode = ? OR name LIKE ? order by name", cleanSearch, "%"+cleanSearch+"%").fetch(10);
     }
 
     public static String toJson(List<City> cities) {
