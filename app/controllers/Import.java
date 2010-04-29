@@ -24,7 +24,7 @@ public class Import extends Controller {
             // Voies
             if(currentCity != null && line.substring(0, 1).equals("V")) {
                 Way way = new Way();
-                way.city = currentCity;
+                way.cityInseeCode = currentCity.inseeCode;
                 way.matriculation = line.substring(6, 14);
                 way.name = line.substring(54, 86).trim();
                 way.save();
@@ -33,7 +33,7 @@ public class Import extends Controller {
             // Voies synonymes (ancienne appellation ou appellation locale)
             else if(currentCity != null && line.substring(0, 1).equals("W")) {
                 Way way = new Way();
-                way.city = currentCity;
+                way.cityInseeCode = currentCity.inseeCode;
                 way.synonym = line.substring(6, 14);
                 way.matriculation = line.substring(14, 22);
                 way.name = line.substring(54, 86).trim();

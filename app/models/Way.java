@@ -7,17 +7,22 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import play.db.jpa.Model;
+import play.modules.search.Field;
+import play.modules.search.Indexed;
+import play.modules.search.Search;
 import play.templates.JavaExtensions;
 
 @Entity
+@Indexed
 public class Way extends Model {
 
-    @ManyToOne(optional=false)
-    public City city;
+    @Column(length=5)
+    @Field
+    public String cityInseeCode;
 
     @Column(length=32)
+    @Field
     public String name;
 
     @Column(length=8)
@@ -27,8 +32,19 @@ public class Way extends Model {
     public String synonym = null;
 
     public static List<Way> search(String city, String search) {
-        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase();
-        return Way.find("city.inseeCode = ? AND name LIKE ? order by name", city, "%"+cleanSearch+"%").fetch(10);
+        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ");
+        String luceneQuery = "cityInseeCode:\"" + city + "\" AND name:\"" + cleanSearch + "\"";
+        String wordsTokenized = "";
+        for(String word : cleanSearch.split(" ")) {
+            if(word.length() > 0) {
+                if(wordsTokenized.length() > 0) wordsTokenized += " AND ";
+                wordsTokenized += "name:" + word + "*";
+            }
+        }
+        if(wordsTokenized.length()>0) {
+            luceneQuery += " OR (" + wordsTokenized + ")";
+        }
+        return Search.search(luceneQuery, Way.class).page(0, 10).fetch();
     }
 
     public static String toJson(List<Way> cities) {
@@ -41,6 +57,7 @@ public class Way extends Model {
 
     public Map<String, Object> getJsonMap() {
         Map<String, Object> jsonMap = new HashMap<String, Object>();
+        jsonMap.put("cityInseeCode", this.cityInseeCode);
         jsonMap.put("name", this.name);
         jsonMap.put("matriculation", this.matriculation);
         if(this.synonym != null) jsonMap.put("synonym", this.synonym);
@@ -48,14 +65,12 @@ public class Way extends Model {
     }
 
     public String toJson() {
-        Map<String, Object> jsonMap = this.getJsonMap();
-        jsonMap.put("city", this.city.getJsonMap());
-        return new Gson().toJson(jsonMap);
+        return new Gson().toJson(this.getJsonMap());
     }
 
     @Override
     public String toString() {
-        return this.city.name + " : " + this.name + " " + this.matriculation;
+        return this.name + " " + this.matriculation + " ( city insee: " + this.cityInseeCode + " )";
     }
 
 }

@@ -5,31 +5,45 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import play.Logger;
 import play.db.jpa.Model;
+import play.modules.search.Field;
+import play.modules.search.Indexed;
+import play.modules.search.Search;
 import play.templates.JavaExtensions;
 
 @Entity
+@Indexed
 public class City extends Model {
-
-    @OneToMany(mappedBy="city", cascade=CascadeType.ALL)
-    public List<Way> ways;
 
     @Column(length=5, unique=true)
     public String inseeCode;
 
     @Column(length=5)
+    @Field
     public String postalCode;
 
     @Column(length=38)
+    @Field
     public String name;
 
     public static List<City> search(String search) {
-        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase();
-        return City.find("postalCode = ? OR name LIKE ? order by name", cleanSearch, "%"+cleanSearch+"%").fetch(10);
+        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ");
+        String luceneQuery = "name:\"" + cleanSearch + "\"";
+        String wordsTokenized = "";
+        for(String word : cleanSearch.split(" ")) {
+            if(word.length() > 0) {
+                if(wordsTokenized.length() > 0) wordsTokenized += " AND ";
+                wordsTokenized += "name:" + word + "*";
+            }
+        }
+        if(wordsTokenized.length()>0) {
+            luceneQuery += " OR (" + wordsTokenized + ")";
+        }
+        Logger.debug("%s" + luceneQuery);
+        return Search.search(luceneQuery, City.class).page(0, 10).fetch();
     }
 
     public static String toJson(List<City> cities) {
