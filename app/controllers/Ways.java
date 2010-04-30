@@ -3,6 +3,8 @@ package controllers;
 import java.util.List;
 import models.Way;
 import play.mvc.Controller;
+import java.util.Date;
+import play.Logger;
 
 public class Ways extends Controller {
 
@@ -11,7 +13,9 @@ public class Ways extends Controller {
             response.status = 400;
             renderJSON("{message: \"Parameters 'city' and 'search' are required.\"}");
         }
+        Date start = new Date();
         List<Way> ways = Way.search(city, search);
+        Logger.debug("%s ms", new Date().getTime() - start.getTime());
         String jsonResult = Way.toJson(ways);
         if(callback != null) {
           response.contentType = "text/javascript";

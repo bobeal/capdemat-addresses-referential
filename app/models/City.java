@@ -30,19 +30,23 @@ public class City extends Model {
     public String name;
 
     public static List<City> search(String search) {
-        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ");
+        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").trim();
+        if(cleanSearch.length() <= 1) {
+            return new ArrayList<City>();
+        }
         String luceneQuery = "name:\"" + cleanSearch + "\"";
         String wordsTokenized = "";
         for(String word : cleanSearch.split(" ")) {
             if(word.length() > 0) {
                 if(wordsTokenized.length() > 0) wordsTokenized += " AND ";
-                wordsTokenized += "name:" + word + "*";
+                wordsTokenized += "name:" + word;
             }
         }
+        wordsTokenized += "*";
         if(wordsTokenized.length()>0) {
             luceneQuery += " OR (" + wordsTokenized + ")";
         }
-        Logger.debug("%s" + luceneQuery);
+        Logger.debug("%s", luceneQuery);
         return Search.search(luceneQuery, City.class).page(0, 10).fetch();
     }
 

@@ -12,6 +12,8 @@ import play.modules.search.Field;
 import play.modules.search.Indexed;
 import play.modules.search.Search;
 import play.templates.JavaExtensions;
+import play.Logger;
+import java.util.Arrays;
 
 @Entity
 @Indexed
@@ -32,18 +34,30 @@ public class Way extends Model {
     public String synonym = null;
 
     public static List<Way> search(String city, String search) {
-        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ");
-        String luceneQuery = "cityInseeCode:\"" + city + "\" AND name:\"" + cleanSearch + "\"";
+        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").trim();
+        if(cleanSearch.length() <= 1) {
+            return new ArrayList<Way>();
+        }
+        String luceneQuery = "cityInseeCode:\"" + city + "\" AND (name:\"" + cleanSearch + "\"";
+        List<String> clearnSearchTb = Arrays.asList(cleanSearch.split(" "));
         String wordsTokenized = "";
-        for(String word : cleanSearch.split(" ")) {
-            if(word.length() > 0) {
+        for(String word : clearnSearchTb) {
+            if(word.length() > 1) {
                 if(wordsTokenized.length() > 0) wordsTokenized += " AND ";
-                wordsTokenized += "name:" + word + "*";
+                wordsTokenized += "name:" + word;
             }
         }
-        if(wordsTokenized.length()>0) {
-            luceneQuery += " OR (" + wordsTokenized + ")";
+        wordsTokenized += "*";
+        if(wordsTokenized.length() > 0) {
+            if(clearnSearchTb.size() > 1) {
+              luceneQuery += " OR (" + wordsTokenized + ")";
+            }
+            else {
+              luceneQuery += " OR " + wordsTokenized;
+            }
         }
+        luceneQuery += ")";
+        Logger.debug("%s", luceneQuery);
         return Search.search(luceneQuery, Way.class).page(0, 10).fetch();
     }
 
