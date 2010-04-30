@@ -34,7 +34,7 @@ public class Way extends Model {
     public String synonym = null;
 
     public static List<Way> search(String city, String search) {
-        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").trim();
+        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").replace("-"," ").trim();
         if(cleanSearch.length() <= 1) {
             return new ArrayList<Way>();
         }

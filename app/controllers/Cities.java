@@ -8,13 +8,13 @@ import play.Logger;
 
 public class Cities extends Controller {
 
-    public static void search(String callback, String search) {
+    public static void search(String callback, String search, Boolean postalCode) {
         if(search == null) {
             response.status = 400;
             renderJSON("{message: \"The parameter 'search' is required.\"}");
         }
         Date start = new Date();
-        List<City> cities = City.search(search);
+        List<City> cities = City.search(search, postalCode != null ? postalCode : false);
         Logger.debug("%s ms", new Date().getTime() - start.getTime());
         String jsonResult = City.toJson(cities);
         if(callback != null) {

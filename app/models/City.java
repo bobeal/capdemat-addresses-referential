@@ -29,25 +29,38 @@ public class City extends Model {
     @Field
     public String name;
 
-    public static List<City> search(String search) {
+    public static List<City> search(String search, Boolean postalCode) {
         String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").trim();
         if(cleanSearch.length() <= 1) {
             return new ArrayList<City>();
         }
-        String luceneQuery = "name:\"" + cleanSearch + "\"";
-        String wordsTokenized = "";
-        for(String word : cleanSearch.split(" ")) {
-            if(word.length() > 0) {
-                if(wordsTokenized.length() > 0) wordsTokenized += " AND ";
-                wordsTokenized += "name:" + word;
-            }
+        if(postalCode) {
+          return Search.search("postalCode:" + cleanSearch + " OR postalCode:" + cleanSearch + "*", City.class)
+            .orderBy("postalCode")
+            .page(0, 10)
+            .fetch();
         }
-        wordsTokenized += "*";
-        if(wordsTokenized.length()>0) {
-            luceneQuery += " OR (" + wordsTokenized + ")";
+        else {
+          String luceneQuery = "name:\"" + cleanSearch + "\"";
+          String wordsTokenized = "";
+          for(String word : cleanSearch.split(" ")) {
+              if(word.length() > 0) {
+                  if(wordsTokenized.length() > 0) wordsTokenized += " AND ";
+                  if(word.equals("SAINT")) {
+                    wordsTokenized += "(name:ST OR name:SAINT)";
+                  }
+                  else {
+                    wordsTokenized += "name:" + word;
+                  }
+              }
+          }
+          wordsTokenized += "*";
+          if(wordsTokenized.length()>0) {
+              luceneQuery += " OR (" + wordsTokenized + ")";
+          }
+          Logger.debug("%s", luceneQuery);
+          return Search.search(luceneQuery, City.class).page(0, 10).fetch();
         }
-        Logger.debug("%s", luceneQuery);
-        return Search.search(luceneQuery, City.class).page(0, 10).fetch();
     }
 
     public static String toJson(List<City> cities) {
