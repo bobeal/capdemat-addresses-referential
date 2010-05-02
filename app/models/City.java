@@ -18,54 +18,62 @@ import play.templates.JavaExtensions;
 @Indexed
 public class City extends Model {
 
-    @Column(length=5, unique=true)
+    @Column(length = 5, unique = true)
     public String inseeCode;
 
-    @Column(length=5)
+    @Column(length = 5)
     @Field
     public String postalCode;
 
-    @Column(length=38)
+    @Column(length = 38)
     @Field
     public String name;
 
     public static List<City> search(String search, Boolean postalCode) {
         String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").trim();
-        if(cleanSearch.length() <= 1) {
+        if (cleanSearch.length() < 1) {
             return new ArrayList<City>();
         }
-        if(postalCode) {
-          return Search.search("postalCode:" + cleanSearch + " OR postalCode:" + cleanSearch + "*", City.class)
-            .orderBy("postalCode")
-            .page(0, 10)
-            .fetch();
-        }
-        else {
-          String luceneQuery = "name:\"" + cleanSearch + "\"";
-          String wordsTokenized = "";
-          for(String word : cleanSearch.split(" ")) {
-              if(word.length() > 0) {
-                  if(wordsTokenized.length() > 0) wordsTokenized += " AND ";
-                  if(word.equals("SAINT")) {
-                    wordsTokenized += "(name:ST OR name:SAINT)";
-                  }
-                  else {
-                    wordsTokenized += "name:" + word;
-                  }
-              }
-          }
-          wordsTokenized += "*";
-          if(wordsTokenized.length()>0) {
-              luceneQuery += " OR (" + wordsTokenized + ")";
-          }
-          Logger.debug("%s", luceneQuery);
-          return Search.search(luceneQuery, City.class).page(0, 10).fetch();
+        if (postalCode) {
+            return Search.search("postalCode:" + cleanSearch + " OR postalCode:" + cleanSearch + "*", City.class).orderBy("postalCode").page(0, 10).fetch();
+        } else {
+            String luceneQuery = "name:\"" + cleanSearch + "\"";
+            if (cleanSearch.length() > 1) {
+                String wordsTokenized = "";
+                Boolean wildcardable = false;
+                for (String word : cleanSearch.split(" ")) {
+                    if (word.length() > 0) {
+                        if (wordsTokenized.length() > 0) {
+                            wordsTokenized += " AND ";
+                        }
+                        if (word.equals("SAINT")) {
+                            wordsTokenized += "(name:ST OR name:SAINT)";
+                            wildcardable = false;
+                        } else if (word.equals("SAINTE")) {
+                            wordsTokenized += "(name:STE OR name:SAINTE)";
+                            wildcardable = false;
+                        } else {
+                            wordsTokenized += "name:" + word;
+                            wildcardable = true;
+                        }
+                    }
+                }
+                if (wildcardable) {
+                    wordsTokenized += "*";
+                }
+                if (wordsTokenized.length() > 0) {
+                    luceneQuery += " OR (" + wordsTokenized + ")";
+                }
+            }
+            Logger.debug("%s", luceneQuery);
+            List<Long> cityIds = Search.search(luceneQuery, City.class).orderBy("name").page(0, 10).fetchIds();
+            return City.find("id in (?1) order by name", cityIds).fetch();
         }
     }
 
     public static String toJson(List<City> cities) {
         List<String> jsonCities = new ArrayList<String>();
-        for(City city : cities) {
+        for (City city : cities) {
             jsonCities.add(city.toJson());
         }
         return jsonCities.toString();
@@ -87,5 +95,4 @@ public class City extends Model {
     public String toString() {
         return this.name + " " + this.postalCode + " ( insee: " + this.inseeCode + " )";
     }
-
 }

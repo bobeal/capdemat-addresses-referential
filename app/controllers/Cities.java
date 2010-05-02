@@ -9,7 +9,7 @@ import play.Logger;
 public class Cities extends Controller {
 
     public static void search(String callback, String search, Boolean postalCode) {
-        if(search == null) {
+        if (search == null) {
             response.status = 400;
             renderJSON("{message: \"The parameter 'search' is required.\"}");
         }
@@ -17,11 +17,10 @@ public class Cities extends Controller {
         List<City> cities = City.search(search, postalCode != null ? postalCode : false);
         Logger.debug("%s ms", new Date().getTime() - start.getTime());
         String jsonResult = City.toJson(cities);
-        if(callback != null) {
-          response.contentType = "text/javascript";
-          renderText(callback + "(" + jsonResult + ")");
+        if (callback != null) {
+            response.contentType = "text/javascript";
+            renderText(callback + "(" + jsonResult + ")");
         }
         renderJSON(jsonResult);
     }
-
 }

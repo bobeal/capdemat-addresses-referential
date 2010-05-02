@@ -19,51 +19,53 @@ import java.util.Arrays;
 @Indexed
 public class Way extends Model {
 
-    @Column(length=5)
+    @Column(length = 5)
     @Field
     public String cityInseeCode;
 
-    @Column(length=32)
+    @Column(length = 32)
     @Field
     public String name;
 
-    @Column(length=8)
+    @Column(length = 8)
     public String matriculation;
 
-    @Column(length=8, nullable=true)
+    @Column(length = 8, nullable = true)
     public String synonym = null;
 
     public static List<Way> search(String city, String search) {
-        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").replace("-"," ").trim();
-        if(cleanSearch.length() <= 1) {
+        String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").replace("-", " ").trim();
+        if (cleanSearch.length() <= 1) {
             return new ArrayList<Way>();
         }
         String luceneQuery = "cityInseeCode:\"" + city + "\" AND (name:\"" + cleanSearch + "\"";
         List<String> clearnSearchTb = Arrays.asList(cleanSearch.split(" "));
         String wordsTokenized = "";
-        for(String word : clearnSearchTb) {
-            if(word.length() > 1) {
-                if(wordsTokenized.length() > 0) wordsTokenized += " AND ";
+        for (String word : clearnSearchTb) {
+            if (word.length() > 1) {
+                if (wordsTokenized.length() > 0) {
+                    wordsTokenized += " AND ";
+                }
                 wordsTokenized += "name:" + word;
             }
         }
         wordsTokenized += "*";
-        if(wordsTokenized.length() > 0) {
-            if(clearnSearchTb.size() > 1) {
-              luceneQuery += " OR (" + wordsTokenized + ")";
-            }
-            else {
-              luceneQuery += " OR " + wordsTokenized;
+        if (wordsTokenized.length() > 0) {
+            if (clearnSearchTb.size() > 1) {
+                luceneQuery += " OR (" + wordsTokenized + ")";
+            } else {
+                luceneQuery += " OR " + wordsTokenized;
             }
         }
         luceneQuery += ")";
         Logger.debug("%s", luceneQuery);
-        return Search.search(luceneQuery, Way.class).page(0, 10).fetch();
+        List<Long> wayIds = Search.search(luceneQuery, Way.class).page(0, 10).fetchIds();
+        return Way.find("id in (?1)", wayIds).fetch();
     }
 
     public static String toJson(List<Way> cities) {
         List<String> jsonWays = new ArrayList<String>();
-        for(Way way : cities) {
+        for (Way way : cities) {
             jsonWays.add(way.toJson());
         }
         return jsonWays.toString();
@@ -74,7 +76,9 @@ public class Way extends Model {
         jsonMap.put("cityInseeCode", this.cityInseeCode);
         jsonMap.put("name", this.name);
         jsonMap.put("matriculation", this.matriculation);
-        if(this.synonym != null) jsonMap.put("synonym", this.synonym);
+        if (this.synonym != null) {
+            jsonMap.put("synonym", this.synonym);
+        }
         return jsonMap;
     }
 
@@ -86,5 +90,4 @@ public class Way extends Model {
     public String toString() {
         return this.name + " " + this.matriculation + " ( city insee: " + this.cityInseeCode + " )";
     }
-
 }
