@@ -2,3 +2,7 @@
 data/
 tmp/
 nbproject/
+.classpath
+.project
+.settings/
+eclipse/
