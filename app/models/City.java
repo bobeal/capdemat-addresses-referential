@@ -38,7 +38,7 @@ public class City extends Model {
             return Search.search("postalCode:" + cleanSearch + " OR postalCode:" + cleanSearch + "*", City.class).orderBy("postalCode").page(0, 10).fetch();
         } else {
             String luceneQuery = "name:\"" + cleanSearch + "\"";
-            if (cleanSearch.length() > 1) {
+            if (cleanSearch.length() > 0) {
                 String wordsTokenized = "";
                 Boolean wildcardable = false;
                 for (String word : cleanSearch.split(" ")) {
@@ -67,7 +67,11 @@ public class City extends Model {
             }
             Logger.debug("%s", luceneQuery);
             List<Long> cityIds = Search.search(luceneQuery, City.class).orderBy("name").page(0, 10).fetchIds();
-            return City.find("id in (?1) order by name", cityIds).fetch();
+            List<City> cities = new ArrayList<City>();
+            if(cityIds.size() > 0) {
+                cities = City.find("id in (?1) order by name", cityIds).fetch();
+            }
+            return cities;
         }
     }
 

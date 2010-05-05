@@ -60,7 +60,11 @@ public class Way extends Model {
         luceneQuery += ")";
         Logger.debug("%s", luceneQuery);
         List<Long> wayIds = Search.search(luceneQuery, Way.class).page(0, 10).fetchIds();
-        return Way.find("id in (?1)", wayIds).fetch();
+        List<Way> ways = new ArrayList<Way>();
+        if(wayIds.size() > 0) {
+            ways = Way.find("id in (?1)", wayIds).fetch();
+        }
+        return ways;
     }
 
     public static String toJson(List<Way> cities) {
