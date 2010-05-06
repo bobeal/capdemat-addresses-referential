@@ -20,5 +20,10 @@ public class AccessControl extends Model {
 
     @Required
     public String name;
-    
+
+    @Override
+    public String toString() {
+        return this.name + " ( token:" + this.token + ", IP:" + this.IP + " )";
+    }
+
 }

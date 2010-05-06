@@ -6,7 +6,7 @@ import play.mvc.Controller;
 import java.util.Date;
 import play.Logger;
 
-public class Ways extends Controller {
+public class Ways extends Services {
 
     public static void search(String callback, String city, String search) {
         if (city == null || search == null) {
