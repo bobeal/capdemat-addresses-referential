@@ -41,15 +41,19 @@ public class Way extends Model {
         String luceneQuery = "cityInseeCode:\"" + city + "\" AND (name:\"" + cleanSearch + "\"";
         List<String> clearnSearchTb = Arrays.asList(cleanSearch.split(" "));
         String wordsTokenized = "";
+        boolean wildcardable = false;
         for (String word : clearnSearchTb) {
             if (word.length() > 1) {
                 if (wordsTokenized.length() > 0) {
                     wordsTokenized += " AND ";
                 }
                 wordsTokenized += "name:" + word;
+                wildcardable = true;
             }
         }
-        wordsTokenized += "*";
+        if (wildcardable) {
+            wordsTokenized += "*";
+        }
         if (wordsTokenized.length() > 0) {
             if (clearnSearchTb.size() > 1) {
                 luceneQuery += " OR (" + wordsTokenized + ")";
