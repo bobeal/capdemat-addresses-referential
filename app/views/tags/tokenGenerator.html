@@ -1,0 +1,14 @@
+<script type="text/javascript">
+    var generateToken = function() {
+        var chars = "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN1234567890";
+        var token = "";
+        for(var i=0; i<16; i++) {
+            token += chars.charAt(Math.floor(Math.random() * (chars.length)));
+        }
+        var tokenInput = document.getElementById("object_token");
+        if(tokenInput) tokenInput.value = token;
+    }
+</script>
+<p>
+    <a href="javascript:generateToken()">Generate token</a>
+</p>
