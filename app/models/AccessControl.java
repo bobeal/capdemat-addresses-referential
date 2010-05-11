@@ -1,7 +1,12 @@
 package models;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import play.data.validation.MinSize;
 import play.data.validation.Required;
@@ -9,6 +14,9 @@ import play.db.jpa.Model;
 
 @Entity
 public class AccessControl extends Model {
+
+    @ManyToOne
+    public Customer customer;
 
     @Required
     public String IP;
@@ -19,11 +27,13 @@ public class AccessControl extends Model {
     public String token;
 
     @Required
-    public String name;
+    public String domainName;
+
+    public Date expirationDate;
 
     @Override
     public String toString() {
-        return this.name + " ( token:" + this.token + ", IP:" + this.IP + " )";
+        return this.domainName + " ( token:" + this.token + ", IP:" + this.IP + " )";
     }
 
 }

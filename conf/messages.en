@@ -1,0 +1,3 @@
+mail.expiration.title=CapDémat - addresses referential subscription : expires in %s
+mail.expiration.content=Your subscription to the Mediapost service expires in %s.
+days=days
