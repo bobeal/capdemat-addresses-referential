@@ -24,4 +24,8 @@ public class Services extends Controller{
         }
     }
 
+    public static void tokenValidity() {
+        renderJSON("{message: \"This token is valid for this IP.\"}");
+    }
+
 }

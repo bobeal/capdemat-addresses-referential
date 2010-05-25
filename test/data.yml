@@ -1,7 +1,39 @@
-# you describe your data using the YAML notation here
-# and then load them using Fixtures.load("data.yml")
+Referential(test):
+  code: TEST
+  name: Le test
 
-# User(bob):
-#   email: bob@gmail.com
-#   password: secret
-#   fullname: Bob
+Referential(hexavia):
+  code: HEXAVIA
+  name: Hexavia
+
+City(plessis):
+  name: LE PLESSIS TREVISE
+  inseeCode: 94059
+  postalCode: 94420
+  referential: test
+
+City(nanterre):
+  name: NANTERRE
+  inseeCode: 92121
+  postalCode: 92000
+  referential: test
+
+City(paris):
+  name: PARIS 01
+  inseeCode: 75101
+  postalCode: 75001
+  referential: hexavia
+
+Way(rambouillet):
+  name: AVENUE DE RAMBOUILLET
+  cityInseeCode: 75101
+  referential: hexavia
+  rivoliCode: 7510100001
+  matriculation: 00000001
+
+Way(ardouin):
+  name: AVENUE ARDOUIN
+  cityInseeCode: 94059
+  referential: hexavia
+  rivoliCode: 7510100001
+  matriculation: 00000001

@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import play.Logger;
 import play.db.jpa.Model;
 import play.modules.search.Field;
@@ -17,6 +20,10 @@ import play.templates.JavaExtensions;
 @Entity
 @Indexed
 public class City extends Model {
+
+    @ManyToOne
+    @Field(joinField = "code")
+    public Referential referential;
 
     @Column(length = 5, unique = true)
     public String inseeCode;

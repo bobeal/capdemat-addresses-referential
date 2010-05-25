@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import play.db.jpa.Model;
 import play.modules.search.Field;
 import play.modules.search.Indexed;
@@ -19,6 +22,10 @@ import java.util.Arrays;
 @Indexed
 public class Way extends Model {
 
+    @ManyToOne
+    @Field(joinField = "code")
+    public Referential referential;
+
     @Column(length = 5)
     @Field
     public String cityInseeCode;
@@ -26,6 +33,9 @@ public class Way extends Model {
     @Column(length = 32)
     @Field
     public String name;
+
+    @Column(length = 10)
+    public String rivoliCode;
 
     @Column(length = 8)
     public String matriculation;

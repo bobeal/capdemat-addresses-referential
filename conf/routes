@@ -3,6 +3,7 @@
 # ~~~~
 
 # Home page
+GET     /token                                  Services.tokenValidity
 GET     /ways                                   Ways.search
 GET     /cities                                 Cities.search
 
