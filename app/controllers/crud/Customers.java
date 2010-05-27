@@ -1,5 +1,8 @@
-package controllers;
+package controllers.crud;
 
+import controllers.CRUD;
+import controllers.Secure;
+import controllers.CRUD.For;
 import play.mvc.With;
 import models.Customer;
 

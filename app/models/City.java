@@ -1,6 +1,21 @@
 package models;
 
+import au.com.bytecode.opencsv.CSVReader;
+
 import com.google.gson.Gson;
+
+import exceptions.BadCSVLineFormatException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.io.Reader;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +24,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PersistenceException;
+
+import org.apache.commons.io.FileUtils;
+import org.hibernate.lob.ReaderInputStream;
 
 import play.Logger;
 import play.db.jpa.Model;
@@ -35,6 +54,49 @@ public class City extends Model {
     @Column(length = 38)
     @Field
     public String name;
+
+    public City() {
+    }
+
+    /*
+     * CSV city import
+     * 0: inseeCode (= 5 chars)
+     * 1: postalCode (= 5 chars)
+     * 2: name (38 chars maximum)
+     */
+    public City(Referential referential, String[] CSVLine) throws BadCSVLineFormatException {
+        this.referential = referential;
+
+        this.inseeCode = CSVLine[0];
+        if(this.inseeCode == null || this.inseeCode.length() == 0) throw new BadCSVLineFormatException("Insee code is empty");
+        if(this.inseeCode.length() != 5) throw new BadCSVLineFormatException("Insee code length isn't equals at 5 : (inseeCode: %s)", this.inseeCode);
+
+        this.postalCode = CSVLine[1];
+        if(this.postalCode == null || this.postalCode.length() == 0) throw new BadCSVLineFormatException("Postal code is empty");
+        if(this.postalCode.length() != 5) throw new BadCSVLineFormatException("Postal code length isn't equals at 5 : (inseeCode: %s, postalCode: %s)", this.inseeCode, this.postalCode);
+
+        this.name = CSVLine[2];
+        if(this.name == null || this.name.length() == 0) throw new BadCSVLineFormatException("Name is empty");
+        if(this.name.length() > 38) throw new BadCSVLineFormatException("The name length is greater than 38 : (inseeCode: %s, name: %s)", this.inseeCode, this.name);
+    }
+
+    public static void importCsv(Import currentImport) throws IOException {
+        CSVReader referentialReader = new CSVReader(new FileReader(currentImport.file));
+        String [] nextLine;
+        for (int i = 0; (nextLine = referentialReader.readNext()) != null; i++) {
+            if(i < currentImport.line) continue;
+            if(i % 100 == 0) Import.em().clear();
+            currentImport.line++;
+            currentImport.save();
+            try {
+                new City(currentImport.referential, nextLine).save();
+            } catch (BadCSVLineFormatException e) {
+                currentImport.log(ImportLog.Error.FORMAT, e.getMessage());
+            } catch (PersistenceException e) {
+                currentImport.log(ImportLog.Error.ALREADY_EXISTS, e.getMessage());
+            }
+        }
+    }
 
     public static List<City> search(String search, Boolean postalCode) {
         String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").trim();

@@ -6,6 +6,7 @@
 GET     /token                                  Services.tokenValidity
 GET     /ways                                   Ways.search
 GET     /cities                                 Cities.search
+GET     /export/cities-{referentialCode}.csv    Export.citiesCSV
 
 *       /admin                                  module:crud
 *       /admin                                  module:secure

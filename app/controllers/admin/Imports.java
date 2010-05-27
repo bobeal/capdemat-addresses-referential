@@ -1,17 +1,50 @@
-package controllers;
+package controllers.admin;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.PersistenceException;
+
+import exceptions.BadCSVLineFormatException;
+
+import au.com.bytecode.opencsv.CSVReader;
+import models.Import;
+import models.Referential;
 import models.Way;
 import models.City;
 import play.Logger;
 import play.Play;
 import play.mvc.Controller;
 
-public class Import extends Controller {
+public class Imports extends Admin {
+
+	public static void index() {
+		List<Import> imports = Import.find("order by importDate desc").fetch();
+		render(imports);
+	}
+
+	public static void importLog(Long importId) {
+		Import _import = Import.findById(importId);
+		notFoundIfNull(_import);
+		render(_import);
+	}
+
+	public static void citiesCSV(String referentialCode, File referentialCSV) throws IOException {
+		Referential referential = Referential.find("code=?", referentialCode.toUpperCase()).first();
+		notFoundIfNull(referential);
+		Import currentImport = Import.queue(referential, referentialCSV, Import.Type.CITY);
+		if(currentImport == null) {
+			flash.put("error", "import.nok");
+			Imports.index();
+		}
+		flash.put("info", "import.ok");
+		Imports.importLog(currentImport.id);
+	}
 
     public static void mediapost() throws FileNotFoundException, IOException {
         File mediapostFile = Play.getFile("data/hffvnn85.tri");

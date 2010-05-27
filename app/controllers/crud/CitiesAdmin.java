@@ -1,5 +1,7 @@
-package controllers;
+package controllers.crud;
 
+import controllers.CRUD;
+import controllers.CRUD.For;
 import models.City;
 
 @CRUD.For(City.class)
