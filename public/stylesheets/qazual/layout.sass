@@ -1,0 +1,143 @@
+body
+	background= !background url(!imagesFolder/body.png) repeat-x
+	font: 13px Helvetica, sans-serif
+	color= !background
+
+hr
+	border:0 #ccc solid
+	border-top-width:1px
+	clear:both
+	height:0
+h1
+	font-size:25px
+h2
+	font-size:23px
+h3
+	font-size:21px
+h4
+	font-size:19px
+h5
+	font-size:17px
+h6
+	font-size:15px
+li
+	padding-left:20px
+p, dl, hr, h1, h2, h3, h4, h5, h6, ol, ul, pre, address, fieldset
+	margin: 10px 0 20px
+
+a
+	color= !link
+	text-decoration: none
+
+	&:hover
+		text-decoration: underline
+
+#container
+	width= !appWidth
+	margin: 0 auto
+
+#header, #navigation, #title, #wrapper
+	overflow: hidden
+
+.left
+	float: left
+
+.right
+	float: right
+
+#header
+	height: 70px
+	margin: 0 0 30px
+
+#wrapper
+	background: #fff
+
+#logo
+	padding: 10px 0
+	max-width: 300px
+
+	a
+		font-size: 1.8em
+		+highLighted
+		color= !darkColor
+		font-weight: bold
+		text-decoration: none
+
+#title
+	padding: 10px 20px 6px
+	background= #ba5194 url(!imagesFolder/title.png) repeat-x
+	border-bottom= 1px solid !darkColor
+
+h1
+	margin: 0
+	font-size: 2.2em
+	font-weight: bold
+	+highLighted
+	color= !darkColor
+
+.separated
+	padding: 0 0 20px
+	overflow: auto
+	background= url(!imagesFolder/column.png) !appWidth * 2 / 3  repeat-y
+
+.main
+	overflow: hidden
+	float: left
+	display: inline
+	width= !appWidth * 2 / 3
+
+.side
+	overflow: hidden
+	float: left
+	display: inline
+	width= !appWidth / 3 - 20px
+	padding: 10px
+
+#navigation
+	background= url(!imagesFolder/navigation.png) repeat-x
+	+border-top-radius(5px)
+	padding: 10px 20px 0
+	margin: 0
+	height: 32px
+
+#topNavigation
+	margin: 0
+	position: absolute
+
+	li
+		display: inline-block
+
+		&.active
+			position: relative
+			top: 2px
+
+			a
+				+sprite(32, 40, !imagesFolder/navigation-item-active.png)
+				+highLighted
+				color= !darkColor
+				top: 0
+				font-weight: bold
+
+				&:hover
+					color= !darkColor-#222
+
+		a
+			+sprite(30, 40, !imagesFolder/navigation-item.png)
+			+downLighted
+			position: relative
+			top: 1px
+			font-size: 1.1em
+			color: #e3e7eb
+			text-decoration: none
+
+			&:hover
+				color: #fff
+
+#notifications
+	float: right
+	margin: 0
+
+	a
+		+sprite(26, 30, !imagesFolder/notification.png, 12, false)
+		+downLighted
+		color: #e3e7eb

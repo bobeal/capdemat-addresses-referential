@@ -12,24 +12,24 @@ import play.db.jpa.Model;
 @Entity
 public class ImportLog extends Model {
 
-	@ManyToOne
-	public Import importEntity;
+    @ManyToOne
+    public Import importEntity;
 
-	@Enumerated(EnumType.STRING)
-	public Error error;
+    @Enumerated(EnumType.STRING)
+    public Error error;
 
-	public String message;
+    public String message;
 
-	public Date date = new Date();
+    public Date logDate = new Date();
 
-	public ImportLog(Import currentImport, Error error, String message) {
-		this.importEntity = currentImport;
-		this.error = error;
-		this.message = message;
-	}
+    public ImportLog(Import currentImport, Error error, String message) {
+        this.importEntity = currentImport;
+        this.error = error;
+        this.message = message;
+    }
 
-	public static enum Error {
-		NONE, FORMAT, ALREADY_EXISTS
-	}
+    public static enum Error {
+        NONE, FORMAT, ALREADY_EXISTS
+    }
 
 }

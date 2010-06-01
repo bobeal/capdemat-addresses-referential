@@ -1,0 +1,15 @@
+#{if flash['success']}
+<div class="message success">
+  &{flash['success']}
+</div>
+#{/if}
+#{if flash['error']}
+<div class="message error">
+  &{flash['error']}
+</div>
+#{/if}
+#{ifErrors}
+<div class="message error">
+  An error occurs during the form submitting.
+</div>
+#{/ifErrors}

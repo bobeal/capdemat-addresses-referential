@@ -1,0 +1,45 @@
+fieldset
+	legend
+		font-size: 1.4em
+		font-weight: bold
+		padding-left: 10px
+
+	dl
+		//border-bottom: 1px dotted #ccc
+		border: 1px solid #cbd6de
+		background= #ebeff2 url(!imagesFolder/column.png) - 330px " 0" repeat-y
+		margin: 5px 0
+		padding: 5px
+		color: #43525f
+
+	dt
+		padding: 5px
+		width: 150px
+		float: left
+
+		label
+			font-weight: bold
+
+	dd
+		color: #666
+		padding: 0 0 5px
+		margin-left: 170px
+
+		label
+			color= #43525f
+			margin: 0 25px 0 5px
+
+	input[type="text"], textarea
+		width: 430px
+		color: #666
+		border: 1px solid #cbd6de
+
+		&:focus
+			border: 1px solid #43525f
+	
+	input[type="text"].short
+		width: 142px
+
+form
+	.error
+		color: #a00

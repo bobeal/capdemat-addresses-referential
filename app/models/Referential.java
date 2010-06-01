@@ -25,6 +25,11 @@ public class Referential extends Model {
     @Required
     public String name;
 
+    public Referential(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return this.code + " ( " + this.name + " )";

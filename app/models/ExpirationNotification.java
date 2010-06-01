@@ -13,14 +13,6 @@ import play.db.jpa.Model;
 @Entity
 public class ExpirationNotification extends Model {
 
-    public ExpirationNotification(Integer step, AccessControl accessControl) {
-        this.accessControl = accessControl;
-        this.step = step;
-        this.expirationDate = accessControl.expirationDate;
-        this.recipientMail = accessControl.customer.email;
-        this.mailingDate = new Date();
-    }
-
     @ManyToOne
     public AccessControl accessControl;
 
@@ -28,6 +20,14 @@ public class ExpirationNotification extends Model {
     public String recipientMail;
     public Date mailingDate;
     public Integer step;
+
+    public ExpirationNotification(Integer step, AccessControl accessControl) {
+        this.accessControl = accessControl;
+        this.step = step;
+        this.expirationDate = accessControl.expirationDate;
+        this.recipientMail = accessControl.customer.email;
+        this.mailingDate = new Date();
+    }
 
     public static boolean exists(ExpirationNotification notification) {
         return find("accessControl = ? and step = ? and expirationDate = ?", notification.accessControl, notification.step, notification.expirationDate).first() != null;

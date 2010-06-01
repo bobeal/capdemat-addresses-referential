@@ -6,7 +6,13 @@
 GET     /token                                  Services.tokenValidity
 GET     /ways                                   Ways.search
 GET     /cities                                 Cities.search
-GET     /export/cities-{referentialCode}.csv    Export.citiesCSV
+
+GET     /imports                                admin.Imports.index
+POST    /imports                                admin.Imports.upload
+GET     /imports/mediapost                      admin.Imports.mediapost
+GET     /imports/{importId}/logs                admin.Imports.logs
+
+GET     /exports/cities-{referentialCode}.csv   admin.Exports.citiesCSV
 
 *       /admin                                  module:crud
 *       /admin                                  module:secure

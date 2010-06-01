@@ -1,0 +1,163 @@
+h2
+	margin: 20px 0 5px
+	font-size: 1.5em
+	font-weight: bold
+	+highLighted
+	color= !title
+
+// Buttons
+a.button
+	+sprite(28, 30, !imagesFolder/button.png)
+	+downLighted
+	color: #e3e7eb
+
+	&:hover
+		color: #fff
+
+a.action
+	+sprite(28, 30, !imagesFolder/actions.png)
+	+downLighted
+	color: #ffd7f0
+
+	&:hover
+		color: #fff
+
+.side
+	ul
+		border-bottom= 1px solid !listBreak - #111
+		margin: 10px 0
+
+		li
+			background= url(!imagesFolder/side-type.png) 7px center no-repeat
+			padding: 2px 0 2px 20px
+			border-top= 1px solid !listBreak - #111
+			text-overflow: ellipsis
+			overflow: hidden
+			white-space: nowrap
+			
+			a
+				color= !link
+
+				&:visited
+					color= !darkColor
+
+.main
+	ul
+		li
+			margin: 0
+			padding: 10px
+			border-bottom: 1px solid #bbb
+
+			h2
+				margin: 0
+
+	dl
+		margin: 5px 0
+		padding: 0
+		&.pending
+			color: #00f
+		&.processing
+			color: #a60
+		&.finished
+			color: #0a0
+
+		dt
+			display: inline
+			&:after
+				content: " : "
+
+		dd
+			display: inline
+
+	.info
+		margin: 50px 100px
+		background-color: #ccc
+		padding: 5px
+		text-align: center
+		+border-radius(8px)
+		color: #555
+		+text-shadow(rgba(255,255,255,0.8), 1px, 1px, 0)
+
+.message
+	padding: 5px
+	margin: 5px 0
+	+border-radius(6px)
+
+	&.error
+		background: #fcc
+		color: #a00
+		border: 1px solid #a00
+
+	&.success
+		background: #cfc
+		color: #0a0
+			border: 1px solid #0a0
+
+table
+	width: 100%
+	border-bottom= 4px solid !title
+
+	caption
+		text-align: right
+		background-color: #35404a
+		+v-gradient(!title + #111, !title)
+		width: 100%
+		overflow: auto
+		color: #fff
+		color: rgba(255,255,255,.2)
+
+		input
+			float: left
+			margin: 5px
+
+		ul
+			float: right
+			margin: 5px
+
+			li
+				display: inline
+
+				a
+					+downLighted
+					text-decoration: none
+					padding: 1px 6px
+					+border-radius(10px)
+					color= !link2
+					+downLighted
+
+					&:hover, &.active
+						background= !title - #222
+						text-decoration: none
+
+	th
+		+v-gradient(#aaa, #fff, color_stop(30%, #ddd))
+		padding: 8px 8px 4px
+		font-weight: bold
+		font-size: 1.2em
+
+	tbody
+		color= !link
+
+		td
+			border-top= 1px solid !listBreak
+			padding: 4px 8px
+			max-width: 300px
+			text-overflow: ellipsis
+			overflow: hidden
+			white-space: nowrap
+
+		tr
+			background= !listOdd
+
+			&:nth-child(even)
+				background= !listEven
+
+			&:hover
+				background: #fff
+				cursor: pointer
+
+	.type
+		width: 80px
+
+	.date
+		width: 80px

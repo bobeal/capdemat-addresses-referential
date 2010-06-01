@@ -1,0 +1,25 @@
+=highLighted
+	+text-shadow(1px,1px,0,rgba(255,255,255,.4))
+
+=downLighted
+	+text-shadow(-1px,-1px,0,rgba(0,0,0,.4))
+
+=sprite(!buttonHeight, !spriteHeight, !buttonImage, !padd= 7, !hover= true)
+	display: inline-block
+	text-decoration: none
+	padding= 0 !padd+px 0 0
+	background= url(!buttonImage) top right repeat-x
+
+	span
+		display: inline-block
+		padding= 0 0 0 !padd+px
+		height= !buttonHeight+px
+		line-height= !buttonHeight+px
+		background= url(!buttonImage) 0 0-!spriteHeight+px repeat-x
+
+	@if !hover == true
+		&:hover
+			background= url(!buttonImage) right 0-!spriteHeight*2+px repeat-x
+
+			span
+				background= url(!buttonImage) left 0-!spriteHeight*3+px repeat-x

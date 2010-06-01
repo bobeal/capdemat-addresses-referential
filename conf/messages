@@ -1,3 +1,7 @@
 mail.expiration.title=CapDémat - abonnement référentiel d'adresses : expiration dans %s
 mail.expiration.content=Votre abonnement au service Mediapost expire dans %s.
 days=jours
+
+import.ok=File has been uploaded, the import is scheduled.
+import.nok=An error occurs during the import.
+validation.fileExists=This file is already uploaded.

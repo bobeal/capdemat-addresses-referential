@@ -1,0 +1,47 @@
+// This grid system is a 6 columns based
+
+// Prefer a multiple of 30
+!appWidth ||= 960px
+!gridMargin ||= 10px
+
+=column
+	margin= 0 !gridMargin
+	overflow: hidden
+	float: left
+	display: inline
+.row
+	width= !appWidth
+	margin: 0 auto
+	overflow: hidden
+* html .row
+	zoom: 1
+.row .row
+	margin= "0 " -!gridMargin
+	width: auto
+	display: inline-block
+
+.grid_1
+	width= !appWidth / 6 - !gridMargin * 2
+	+column
+.grid_2
+	width= !appWidth / 3 - !gridMargin * 2
+	+column
+.grid_3
+	width= !appWidth / 2 - !gridMargin * 2
+	+column
+.grid_4
+	width= !appWidth * 4 / 6 - !gridMargin * 2
+	+column
+.grid_5
+	width= !appWidth * 5 / 6 - !gridMargin * 2
+	+column
+.grid_6
+	width= !appWidth - !gridMargin * 2
+	+column
+
+.grid_30
+	width= !appWidth / 4.5 - !gridMargin * 2
+	+column
+.grid_60
+	width= !appWidth / 2.25 - !gridMargin * 2
+	+column

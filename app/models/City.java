@@ -25,6 +25,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceException;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.io.FileUtils;
 import org.hibernate.lob.ReaderInputStream;
@@ -37,14 +39,15 @@ import play.modules.search.Search;
 import play.templates.JavaExtensions;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "referential_id", "inseeCode" }))
 @Indexed
 public class City extends Model {
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @Field(joinField = "code")
     public Referential referential;
 
-    @Column(length = 5, unique = true)
+    @Column(length = 5)
     public String inseeCode;
 
     @Column(length = 5)
@@ -84,9 +87,9 @@ public class City extends Model {
         CSVReader referentialReader = new CSVReader(new FileReader(currentImport.file));
         String [] nextLine;
         for (int i = 0; (nextLine = referentialReader.readNext()) != null; i++) {
-            if(i < currentImport.line) continue;
-            if(i % 100 == 0) Import.em().clear();
-            currentImport.line++;
+            if(i < currentImport.importLine) continue;
+            //if(i % 100 == 0) Import.em().clear();
+            currentImport.importLine++;
             currentImport.save();
             try {
                 new City(currentImport.referential, nextLine).save();

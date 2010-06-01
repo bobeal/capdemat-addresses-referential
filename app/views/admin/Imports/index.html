@@ -1,0 +1,74 @@
+#{extends 'main.html' /}
+
+#{set 'title'}CSV import files#{/set}
+
+<div class="separated">
+  <div class="main">
+    <ul>
+      #{list items:imports, as:'currentImport'}
+      <li>
+        <h2>
+          <a href="@{admin.Imports.logs(currentImport.id)}">${currentImport.originalFileName}</a>
+          (${currentImport.fileSize?.formatSize()})
+        </h2>
+        #{if !currentImport.importStart}
+        <dl class="pending">
+          <dt>Status</dt>
+          <dd>Pending import start</dd>
+        </dl>
+        #{/if}
+        #{elseif !currentImport.importStop}
+        <dl class="processing">
+          <dt>Status</dt>
+          <dd>Import in process...</dd>
+        </dl>
+        #{/elseif}
+        #{else}
+        <dl class="finished">
+          <dt>Status</dt>
+          <dd>Import finished</dd>
+        </dl>
+        #{/else}
+        #{if currentImport.importStart}
+        <dl>
+          <dt>Import starting date</dt>
+          <dd>${currentImport.importStart.format("HH:mm dd/MM/yyyy")}</dd>
+        </dl>
+        #{/if}
+        #{if currentImport.importStop}
+        <dl>
+          <dt>Import ending date</dt>
+          <dd>${currentImport.importStop.format("HH:mm dd/MM/yyyy")}</dd>
+        </dl>
+        #{/if}
+      </li>
+      #{/list}
+    </ul>
+  </div>
+  <div class="side">
+    <h2>New CSV file</h2>
+    #{drawMessages /}
+    #{form @admin.Imports.upload(), enctype:'multipart/form-data'}
+      <p>
+        <select name="referentialId">
+          #{list items:referentials, as:'referential'}
+          <option value="${referential.id}">${referential.name} (${referential.code})</option>
+          #{/list}
+        </select>
+        <a href="@{admin.crud.Referentials.list()}">New referential</a>
+        #{ifError 'referentialId'}<br /><span class="error">&raquo; #{error 'referentialId' /}</span>#{/ifError}
+      </p>
+      <p>
+        <input type="radio" id="importTypeCity" name="importType" value="${models.Import.Type.CITY.name()}" checked>
+        <label for="importTypeCity">${models.Import.Type.CITY.toString()}</label><br />
+        <input type="radio" id="importTypeWay" name="importType" value="${models.Import.Type.WAY.name()}">
+        <label for="importTypeWay">${models.Import.Type.WAY.toString()}</label>
+        #{ifError 'importType'}<br /><span class="error">&raquo; #{error 'importType' /}</span>#{/ifError}
+      </p>
+      <p>
+        <input type="file" name="csvFile">
+        #{ifError 'csvFile'}<br /><span class="error">&raquo; #{error 'csvFile' /}</span>#{/ifError}
+      </p>
+      <button type="submit">Upload</button>
+    #{/form}
+</div>
