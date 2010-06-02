@@ -5,7 +5,7 @@ public class BadCSVLineFormatException extends Exception {
     public String reason;
 
     public BadCSVLineFormatException(String reason, Object... args) {
-        this.reason = format(reason);
+        this.reason = format(reason, args);
     }
 
     @Override

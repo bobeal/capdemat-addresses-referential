@@ -9,8 +9,6 @@ import java.util.Map.Entry;
 
 import org.joda.time.DateTime;
 
-import com.sun.tools.doclets.internal.toolkit.Configuration;
-
 import controllers.Notifications;
 
 import models.AccessControl;
@@ -18,6 +16,7 @@ import models.ExpirationNotification;
 
 import play.Logger;
 import play.Play;
+import play.Play.Mode;
 import play.jobs.Every;
 import play.jobs.Job;
 import play.jobs.On;
@@ -43,6 +42,7 @@ public class ExpirationNotifications extends Job<Void> {
 
     @Override
     public void doJob() {
+        if(Play.id.equals("test")) return;
         Map<Integer, AccessControl> expireAclByStep = new HashMap<Integer, AccessControl>();
         DateTime now = new DateTime();
         List<AccessControl> expiredAcl = AccessControl.find("expirationDate > ? and expirationDate < ?", now.toDate(), now.plusDays(30).toDate()).fetch();

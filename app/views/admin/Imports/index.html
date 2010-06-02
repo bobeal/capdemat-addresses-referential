@@ -11,36 +11,44 @@
           <a href="@{admin.Imports.logs(currentImport.id)}">${currentImport.originalFileName}</a>
           (${currentImport.fileSize?.formatSize()})
         </h2>
+        <dl class="right">
+          <dt>Type</dt>
+          <dd>${currentImport.type.toString()}</dd>
+        </dl>
         #{if !currentImport.importStart}
-        <dl class="pending">
+        <dl class="left pending">
           <dt>Status</dt>
           <dd>Pending import start</dd>
         </dl>
         #{/if}
         #{elseif !currentImport.importStop}
-        <dl class="processing">
+        <dl class="left processing">
           <dt>Status</dt>
           <dd>Import in process...</dd>
         </dl>
         #{/elseif}
         #{else}
-        <dl class="finished">
+        <dl class="left finished">
           <dt>Status</dt>
           <dd>Import finished</dd>
         </dl>
         #{/else}
-        #{if currentImport.importStart}
-        <dl>
-          <dt>Import starting date</dt>
-          <dd>${currentImport.importStart.format("HH:mm dd/MM/yyyy")}</dd>
+        <dl class="right">
+          <dt>Logs</dt>
+          <dd>${currentImport.logs.size()?:'-'}</dd>
         </dl>
-        #{/if}
-        #{if currentImport.importStop}
-        <dl>
-          <dt>Import ending date</dt>
-          <dd>${currentImport.importStop.format("HH:mm dd/MM/yyyy")}</dd>
+        <dl class="left">
+          <dt>Start</dt>
+          <dd>${currentImport.importStart?currentImport.importStart.format("HH:mm dd/MM/yyyy"):'-'}</dd>
         </dl>
-        #{/if}
+        <dl class="right">
+          <dt>CSV lines</dt>
+          <dd>${currentImport.importLine?:'-'}</dd>
+        </dl>
+        <dl class="left">
+          <dt>Stop</dt>
+          <dd>${currentImport.importStop?currentImport.importStop.format("HH:mm dd/MM/yyyy"):'-'}</dd>
+        </dl>
       </li>
       #{/list}
     </ul>

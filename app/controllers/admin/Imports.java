@@ -68,7 +68,7 @@ public class Imports extends Admin {
             Imports.index();
         }
         flash.put("success", "import.ok");
-        Imports.logs(currentImport.id);
+        Imports.index();
     }
 
     public static void mediapost(Long limit) throws FileNotFoundException, IOException {

@@ -42,8 +42,9 @@ a.action
 					color= !darkColor
 
 .main
-	ul
+	>ul
 		li
+			overflow: auto
 			margin: 0
 			padding: 10px
 			border-bottom: 1px solid #bbb
@@ -60,6 +61,12 @@ a.action
 			color: #a60
 		&.finished
 			color: #0a0
+		&.left
+			width: 200px
+			float: left
+		&.right
+			width: 400px
+			float: right
 
 		dt
 			display: inline
@@ -113,6 +120,7 @@ table
 		ul
 			float: right
 			margin: 5px
+			line-height: 22px
 
 			li
 				display: inline
@@ -157,7 +165,7 @@ table
 				cursor: pointer
 
 	.type
-		width: 80px
+		width: 120px
 
 	.date
-		width: 80px
+		width: 120px

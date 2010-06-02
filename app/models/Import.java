@@ -24,6 +24,7 @@ import javax.persistence.Transient;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 
+import play.Logger;
 import play.Play;
 import play.db.jpa.Model;
 import play.exceptions.UnexpectedException;
@@ -92,7 +93,7 @@ public class Import extends Model {
             md.update((byte) theByte);
         }
         in.close();
-        return md.toString();
+        return String.valueOf(Hex.encodeHex(md.digest()));
     }
 
     public void log(ImportLog.Error error, String message) {

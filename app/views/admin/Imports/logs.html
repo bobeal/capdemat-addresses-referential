@@ -1,10 +1,10 @@
 #{extends 'main.html' /}
 
-#{set 'title'}CSV import files#{/set}
+#{set 'title'}${currentImport.originalFileName} import : logs#{/set}
 
 <div class="separated">
   <div class="main">
-    #{if importLogs?.size() > 0}
+    #{if currentImport.logs?.size() > 0}
     <table>
       <caption>
         <input type="search" placeholder="Recherche" results="5" size="35" />
@@ -22,11 +22,11 @@
         </tr>
       </thead>
       <tbody>
-        #{list items:importLogs, as:'log'}
+        #{list items:currentImport.logs, as:'log'}
         <tr>
           <td class="message">${log.message}</td>
           <td class="type">${log.error}</td>
-          <td class="date">${log.logDate.format("HH:ii dd/MM/YYYY")}</td>
+          <td class="date">${log.logDate.format("HH:mm dd/MM/yyyy")}</td>
         </tr>
         #{/list}
       </tbody>

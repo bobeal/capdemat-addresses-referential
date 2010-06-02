@@ -13,7 +13,7 @@ import play.test.Fixtures;
 import play.test.UnitTest;
 
 
-public class ReferentialModel extends UnitTest {
+public class WebServiceTest extends UnitTest {
 
     @Before
     public void clean() {

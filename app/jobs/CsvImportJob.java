@@ -6,6 +6,7 @@ import java.util.Date;
 import models.City;
 import models.Import;
 import play.Logger;
+import play.Play;
 import play.jobs.Every;
 import play.jobs.Job;
 
@@ -14,6 +15,7 @@ public class CsvImportJob extends Job<Void> {
 
     @Override
     public void doJob() {
+        if(Play.id.equals("test")) return;
         Import currentImport = Import.findFirstInQueue();
         if(currentImport != null) {
             try {

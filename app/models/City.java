@@ -33,13 +33,14 @@ import org.hibernate.lob.ReaderInputStream;
 
 import play.Logger;
 import play.db.jpa.Model;
+import play.i18n.Messages;
 import play.modules.search.Field;
 import play.modules.search.Indexed;
 import play.modules.search.Search;
 import play.templates.JavaExtensions;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "referential_id", "inseeCode" }))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"referential_id", "inseeCode"}))
 @Indexed
 public class City extends Model {
 
@@ -71,16 +72,16 @@ public class City extends Model {
         this.referential = referential;
 
         this.inseeCode = CSVLine[0];
-        if(this.inseeCode == null || this.inseeCode.length() == 0) throw new BadCSVLineFormatException("Insee code is empty");
-        if(this.inseeCode.length() != 5) throw new BadCSVLineFormatException("Insee code length isn't equals at 5 : (inseeCode: %s)", this.inseeCode);
+        if(this.inseeCode == null || this.inseeCode.length() == 0) throw new BadCSVLineFormatException(Messages.get("city.inseeCode.empty"));
+        if(this.inseeCode.length() != 5) throw new BadCSVLineFormatException(Messages.get("city.inseeCode.wrongLength", this.inseeCode));
 
-        this.postalCode = CSVLine[1];
-        if(this.postalCode == null || this.postalCode.length() == 0) throw new BadCSVLineFormatException("Postal code is empty");
-        if(this.postalCode.length() != 5) throw new BadCSVLineFormatException("Postal code length isn't equals at 5 : (inseeCode: %s, postalCode: %s)", this.inseeCode, this.postalCode);
+        this.name = CSVLine[1];
+        if(this.name == null || this.name.length() == 0) throw new BadCSVLineFormatException(Messages.get("city.name.empty"));
+        if(this.name.length() > 38) throw new BadCSVLineFormatException(Messages.get("city.name.wrongLength", this.inseeCode, this.name));
 
-        this.name = CSVLine[2];
-        if(this.name == null || this.name.length() == 0) throw new BadCSVLineFormatException("Name is empty");
-        if(this.name.length() > 38) throw new BadCSVLineFormatException("The name length is greater than 38 : (inseeCode: %s, name: %s)", this.inseeCode, this.name);
+        this.postalCode = CSVLine[2];
+        if(this.postalCode == null || this.postalCode.length() == 0) throw new BadCSVLineFormatException(Messages.get("city.postalCode.empty"));
+        if(this.postalCode.length() != 5) throw new BadCSVLineFormatException(Messages.get("city.postalCode.wrongLength", this.inseeCode, this.postalCode));
     }
 
     public static void importCsv(Import currentImport) throws IOException {
@@ -88,17 +89,25 @@ public class City extends Model {
         String [] nextLine;
         for (int i = 0; (nextLine = referentialReader.readNext()) != null; i++) {
             if(i < currentImport.importLine) continue;
-            //if(i % 100 == 0) Import.em().clear();
+            if(i > 0 && (i % 100 == 0)) Import.em().clear();
             currentImport.importLine++;
             currentImport.save();
             try {
-                new City(currentImport.referential, nextLine).save();
+                City city = new City(currentImport.referential, nextLine);
+                if(!City.exists(city)) {
+                    city.save();
+                }
+                else {
+                    currentImport.log(ImportLog.Error.ALREADY_EXISTS, Messages.get("city.alreadyExists", city.name, city.inseeCode));
+                }
             } catch (BadCSVLineFormatException e) {
                 currentImport.log(ImportLog.Error.FORMAT, e.getMessage());
-            } catch (PersistenceException e) {
-                currentImport.log(ImportLog.Error.ALREADY_EXISTS, e.getMessage());
             }
         }
+    }
+
+    private static boolean exists(City city) {
+        return find("referential = ? and inseeCode = ?", city.referential, city.inseeCode).first() != null;
     }
 
     public static List<City> search(String search, Boolean postalCode) {
