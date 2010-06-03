@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +29,7 @@ import play.Logger;
 import play.Play;
 import play.db.jpa.Model;
 import play.exceptions.UnexpectedException;
+import play.i18n.Messages;
 import play.libs.Codec;
 import play.libs.IO;
 import play.vfs.VirtualFile;
@@ -96,8 +98,8 @@ public class Import extends Model {
         return String.valueOf(Hex.encodeHex(md.digest()));
     }
 
-    public void log(ImportLog.Error error, String message) {
-        new ImportLog(this, error, message).save();
+    public void log(ImportLog.Error error, String message, String jsonObject) {
+        new ImportLog(this, error, message, jsonObject).save();
     }
 
     public static Import findFirstInQueue() {
@@ -106,6 +108,14 @@ public class Import extends Model {
 
     public static boolean fileExists(File file) throws NoSuchAlgorithmException, IOException {
         return find("fileHash = ?", hashFile(file)).first() != null;
+    }
+
+    public void alreadyExists(String jsonObject) {
+        this.log(ImportLog.Error.ALREADY_EXISTS, Messages.get("alreadyExists"), jsonObject);
+    }
+
+    public void badFormat(String keyMessage, String jsonObject) {
+        this.log(ImportLog.Error.FORMAT, Messages.get(keyMessage), jsonObject);
     }
 
     public static enum Type {

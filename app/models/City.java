@@ -71,17 +71,31 @@ public class City extends Model {
     public City(Referential referential, String[] CSVLine) throws BadCSVLineFormatException {
         this.referential = referential;
 
-        this.inseeCode = CSVLine[0];
-        if(this.inseeCode == null || this.inseeCode.length() == 0) throw new BadCSVLineFormatException(Messages.get("city.inseeCode.empty"));
-        if(this.inseeCode.length() != 5) throw new BadCSVLineFormatException(Messages.get("city.inseeCode.wrongLength", this.inseeCode));
+        inseeCode = CSVLine[0];
+        name = CSVLine[1];
+        postalCode = CSVLine[2];
 
-        this.name = CSVLine[1];
-        if(this.name == null || this.name.length() == 0) throw new BadCSVLineFormatException(Messages.get("city.name.empty"));
-        if(this.name.length() > 38) throw new BadCSVLineFormatException(Messages.get("city.name.wrongLength", this.inseeCode, this.name));
+        if(inseeCode == null || inseeCode.length() == 0)
+            badFormat("city.inseeCode.empty");
 
-        this.postalCode = CSVLine[2];
-        if(this.postalCode == null || this.postalCode.length() == 0) throw new BadCSVLineFormatException(Messages.get("city.postalCode.empty"));
-        if(this.postalCode.length() != 5) throw new BadCSVLineFormatException(Messages.get("city.postalCode.wrongLength", this.inseeCode, this.postalCode));
+        if(inseeCode.length() != 5)
+            badFormat("city.inseeCode.wrongLength");
+
+        if(name == null || name.length() == 0)
+            badFormat("city.name.empty");
+
+        if(name.length() > 38)
+            badFormat("city.name.wrongLength");
+
+        if(postalCode == null || postalCode.length() == 0)
+            badFormat("city.postalCode.empty");
+
+        if(postalCode.length() != 5)
+            badFormat("city.postalCode.wrongLength");
+    }
+
+    public void badFormat(String messageKey) throws BadCSVLineFormatException {
+        throw new BadCSVLineFormatException(messageKey, this.toJson());
     }
 
     public static void importCsv(Import currentImport) throws IOException {
@@ -89,7 +103,7 @@ public class City extends Model {
         String [] nextLine;
         for (int i = 0; (nextLine = referentialReader.readNext()) != null; i++) {
             if(i < currentImport.importLine) continue;
-            if(i > 0 && (i % 100 == 0)) Import.em().clear();
+            if(i > 0 && (i % 100 == 0)) Import.em().flush();
             currentImport.importLine++;
             currentImport.save();
             try {
@@ -98,10 +112,10 @@ public class City extends Model {
                     city.save();
                 }
                 else {
-                    currentImport.log(ImportLog.Error.ALREADY_EXISTS, Messages.get("city.alreadyExists", city.name, city.inseeCode));
+                    currentImport.alreadyExists(city.toJson());
                 }
             } catch (BadCSVLineFormatException e) {
-                currentImport.log(ImportLog.Error.FORMAT, e.getMessage());
+                currentImport.badFormat(e.messageKey, e.jsonObject);
             }
         }
     }
@@ -164,7 +178,7 @@ public class City extends Model {
         return jsonCities.toString();
     }
 
-    public Map<String, Object> getJsonMap() {
+    public Map<String, Object> toJsonMap() {
         Map<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("name", this.name);
         jsonMap.put("inseeCode", this.inseeCode);
@@ -173,7 +187,7 @@ public class City extends Model {
     }
 
     public String toJson() {
-        return new Gson().toJson(this.getJsonMap());
+        return new Gson().toJson(this.toJsonMap());
     }
 
     @Override

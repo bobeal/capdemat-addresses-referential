@@ -24,7 +24,7 @@
       <tbody>
         #{list items:currentImport.logs, as:'log'}
         <tr>
-          <td class="message">${log.message}</td>
+          <td class="message">&{log.messageKey}</td>
           <td class="type">${log.error}</td>
           <td class="date">${log.logDate.format("HH:mm dd/MM/yyyy")}</td>
         </tr>

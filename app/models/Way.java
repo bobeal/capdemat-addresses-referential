@@ -1,6 +1,14 @@
 package models;
 
+import au.com.bytecode.opencsv.CSVReader;
+
 import com.google.gson.Gson;
+
+import exceptions.BadCSVLineFormatException;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import play.db.jpa.Model;
+import play.i18n.Messages;
 import play.modules.search.Field;
 import play.modules.search.Indexed;
 import play.modules.search.Search;
@@ -41,7 +50,91 @@ public class Way extends Model {
     public String matriculation;
 
     @Column(length = 8, nullable = true)
-    public String synonym = null;
+    public String synonymMatricualtion = null;
+
+    @Column(length = 10, nullable = true)
+    public String synonymRivoliCode = null;
+
+    public Way() {
+    }
+
+    /*
+     * CSV city import
+     * 0: cityInseeCode (= 5 chars)
+     * 1: matriculation (= 8 chars)
+     * 2: rivoliCode (= 10 chars)
+     * 3: name (<= 32 chars)
+     * 4: synonymMatriculation (= 8 chars)
+     * 5: synonymRivoliCode (=10 chars)
+     */
+    public Way(Referential referential, String[] CSVLine) throws BadCSVLineFormatException {
+        this.referential = referential;
+
+        cityInseeCode = CSVLine[0];
+        matriculation = CSVLine[1];
+        rivoliCode = CSVLine[2];
+        name = CSVLine[3];
+        synonymMatricualtion = CSVLine[4];
+        synonymRivoliCode = CSVLine[5];
+
+        if(cityInseeCode == null || cityInseeCode.length() == 0)
+            badFormat("way.cityInseeCode.empty");
+
+        if(cityInseeCode.length() != 5)
+            badFormat("way.cityInseeCode.wrongLength");
+
+        if(matriculation != null && rivoliCode.length() != 0 && matriculation.length() != 8)
+            badFormat("way.matriculation.wrongLength");
+
+        if(rivoliCode != null && rivoliCode.length() != 0 && rivoliCode.length() != 10)
+            badFormat("way.rivoliCode.wrongLength");
+
+        if((matriculation == null || matriculation.length() == 0) && (rivoliCode == null || rivoliCode.length() == 0))
+            badFormat("way.identifier.missing");
+
+        if(name == null || name.length() == 0)
+            badFormat("way.name.empty");
+
+        if(name.length() > 32)
+            badFormat("way.name.wrongLength");
+
+        if(synonymMatricualtion != null && synonymMatricualtion.length() != 8 && synonymMatricualtion.length() != 0)
+            badFormat("way.synonymMatriculation.wrongLength");
+
+        if(synonymRivoliCode != null && synonymRivoliCode.length() != 10 && synonymRivoliCode.length() != 0)
+            badFormat("way.synonymRivoliCode.wrongLength");
+    }
+
+    public void badFormat(String messageKey) throws BadCSVLineFormatException {
+        throw new BadCSVLineFormatException(messageKey, this.toJson());
+    }
+
+    public static void importCsv(Import currentImport) throws IOException {
+        CSVReader referentialReader = new CSVReader(new FileReader(currentImport.file));
+        String [] nextLine;
+        for (int i = 0; (nextLine = referentialReader.readNext()) != null; i++) {
+            if(i < currentImport.importLine) continue;
+            if(i > 0 && (i % 100 == 0)) Import.em().flush();
+            currentImport.importLine++;
+            currentImport.save();
+            try {
+                Way way = new Way(currentImport.referential, nextLine);
+                if(!exists(way)) {
+                    way.save();
+                }
+                else {
+                    currentImport.alreadyExists(way.toJson());
+                }
+            } catch (BadCSVLineFormatException e) {
+                currentImport.badFormat(e.messageKey, e.jsonObject);
+            }
+        }
+    }
+
+    private static boolean exists(Way way) {
+        if(way.matriculation != null) return find("referential = ? and matriculation = ?", way.referential, way.matriculation).first() != null;
+        else return find("referential = ? and rivoliCode = ?", way.referential, way.rivoliCode).first() != null;
+    }
 
     public static List<Way> search(String city, String search) {
         String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").replace("-", " ").trim();
@@ -89,23 +182,24 @@ public class Way extends Model {
         return jsonWays.toString();
     }
 
-    public Map<String, Object> getJsonMap() {
+    public Map<String, Object> toJsonMap() {
         Map<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("cityInseeCode", this.cityInseeCode);
         jsonMap.put("name", this.name);
-        jsonMap.put("matriculation", this.matriculation);
-        if (this.synonym != null) {
-            jsonMap.put("synonym", this.synonym);
-        }
+        if(this.matriculation != null) jsonMap.put("matriculation", this.matriculation);
+        if(this.rivoliCode != null) jsonMap.put("inseeCode", this.rivoliCode);
+        if (this.synonymMatricualtion != null) jsonMap.put("synonymMatriculation", this.synonymMatricualtion);
+        if (this.synonymRivoliCode != null) jsonMap.put("synonymRivoliCode", this.synonymRivoliCode);
         return jsonMap;
     }
 
     public String toJson() {
-        return new Gson().toJson(this.getJsonMap());
+        return new Gson().toJson(this.toJsonMap());
     }
 
     @Override
     public String toString() {
         return this.name + " " + this.matriculation + " ( city insee: " + this.cityInseeCode + " )";
     }
+
 }

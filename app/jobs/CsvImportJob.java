@@ -5,6 +5,7 @@ import java.util.Date;
 
 import models.City;
 import models.Import;
+import models.Way;
 import play.Logger;
 import play.Play;
 import play.jobs.Every;
@@ -19,20 +20,20 @@ public class CsvImportJob extends Job<Void> {
         Import currentImport = Import.findFirstInQueue();
         if(currentImport != null) {
             try {
+                if(currentImport.importStart == null) {
+                    currentImport.importStart = new Date();
+                    currentImport.save();
+                }
                 switch(currentImport.type) {
                     case CITY:
-                        if(currentImport.importStart == null) {
-                            currentImport.importStart = new Date();
-                            currentImport.save();
-                        }
                         City.importCsv(currentImport);
-                        currentImport.importStop = new Date();
-                        currentImport.save();
                         break;
                     case WAY:
-                        //TODO
+                        Way.importCsv(currentImport);
                         break;
                 }
+                currentImport.importStop = new Date();
+                currentImport.save();
             } catch (IOException e) {
                 Logger.warn("%s - %s", e.getMessage(), e.getCause());
             }

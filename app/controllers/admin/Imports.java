@@ -96,7 +96,7 @@ public class Imports extends Admin {
                 Way way = new Way();
                 way.referential = referential;
                 way.cityInseeCode = currentCity.inseeCode;
-                way.synonym = line.substring(6, 14);
+                way.synonymMatricualtion = line.substring(6, 14);
                 way.matriculation = line.substring(14, 22);
                 way.name = line.substring(54, 86).trim();
                 way.save();

@@ -13,6 +13,7 @@ GET     /imports/mediapost                      admin.Imports.mediapost
 GET     /imports/{importId}/logs                admin.Imports.logs
 
 GET     /exports/cities-{referentialCode}.csv   admin.Exports.citiesCSV
+GET     /exports/ways-{referentialCode}.csv     admin.Exports.waysCSV
 
 *       /admin                                  module:crud
 *       /admin                                  module:secure

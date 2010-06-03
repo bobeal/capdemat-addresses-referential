@@ -1,22 +1,16 @@
 package exceptions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BadCSVLineFormatException extends Exception {
 
-    public String reason;
+    public String messageKey;
+    public String jsonObject;
 
-    public BadCSVLineFormatException(String reason, Object... args) {
-        this.reason = format(reason, args);
+    public BadCSVLineFormatException(String messageKey, String jsonObject) {
+        this.messageKey = messageKey;
+        this.jsonObject = jsonObject;
     }
 
-    @Override
-    public String getMessage() {
-        return this.reason;
-    }
-
-    public static String format(String msg, Object... args) {
-        if (args != null && args.length > 0) {
-            return String.format(msg, args);
-        }
-        return msg;
-    }
 }

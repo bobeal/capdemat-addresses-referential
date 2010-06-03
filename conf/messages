@@ -6,12 +6,21 @@ import.ok=File has been uploaded, the import is scheduled.
 import.nok=An error occurs during the import.
 validation.fileExists=This file is already uploaded.
 
-city.alreadyExists=%s (insee: %s) already exists.
-way.alreadyExists=%s (matricule: %s) already exists.
+alreadyExists=Already exists
 
 city.inseeCode.empty=Insee code is empty
-city.inseeCode.wrongLength=Insee code length isn't equals to 5 : (insee: %s)
+city.inseeCode.wrongLength=Insee code length isn't equals to 5
 city.name.empty=Name is empty
-city.name.wrongLength=The name length is greater than 38 : (insee: %s, name: %s)
+city.name.wrongLength=The name length is greater than 38
 city.postalCode.empty=Postal code is empty
 city.postalCode.wrongLength=Postal code length isn't equals to 5
+
+way.cityInseeCode.empty=City insee code is empty
+way.cityInseeCode.wrongLength=City insee code length isn't equals to 5
+way.matriculation.wrongLength=Matriculation isn't equals to 8
+way.rivoliCode.wrongLength=Rivoli code length isn't equals to 10
+way.identifier.missing=Neither matriculation nor rivoli code are given.
+way.name.empty=The name is empty
+way.name.wrongLength=The name length is greater than 32
+way.synonymMatriculation.wrongLength=The synonym matriculation isn't equals to 8
+way.synonymRivoliCode.wrongLength=The synonym rivoli code isn't equals to 10
