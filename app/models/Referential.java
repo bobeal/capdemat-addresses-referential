@@ -35,4 +35,8 @@ public class Referential extends Model {
         return this.code + " ( " + this.name + " )";
     }
 
+    public static Referential findByCode(String referentialCode) {
+        return find("code = ?", referentialCode).first();
+    }
+
 }

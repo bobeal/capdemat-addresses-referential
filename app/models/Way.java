@@ -18,6 +18,10 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.validator.Length;
+
+import play.data.validation.Equals;
+import play.data.validation.Required;
 import play.db.jpa.Model;
 import play.i18n.Messages;
 import play.modules.search.Field;
@@ -37,22 +41,30 @@ public class Way extends Model {
 
     @Column(length = 5)
     @Field
+    @Required
+    @Length(min=5, max=5)
     public String cityInseeCode;
 
     @Column(length = 32)
     @Field
+    @Required
+    @Length(max=32)
     public String name;
 
     @Column(length = 10)
+    @Length(min=10, max=10)
     public String rivoliCode;
 
     @Column(length = 8)
+    @Length(min=8, max=8)
     public String matriculation;
 
     @Column(length = 8, nullable = true)
+    @Length(min=8, max=8)
     public String synonymMatricualtion = null;
 
     @Column(length = 10, nullable = true)
+    @Length(min=10, max=10)
     public String synonymRivoliCode = null;
 
     public Way() {

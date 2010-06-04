@@ -24,3 +24,7 @@ way.name.empty=The name is empty
 way.name.wrongLength=The name length is greater than 32
 way.synonymMatriculation.wrongLength=The synonym matriculation isn't equals to 8
 way.synonymRivoliCode.wrongLength=The synonym rivoli code isn't equals to 10
+
+referential.notFound=The referential was not found
+way.notFound=The way was not found
+way.wrongReferential=The referential is not correct
