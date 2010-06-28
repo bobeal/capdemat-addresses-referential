@@ -46,7 +46,7 @@ public class Way extends Model {
     public String cityInseeCode;
 
     @Column(length = 32)
-    @Field
+    @Field(sortable = true)
     @Required
     @Length(max=32)
     public String name;

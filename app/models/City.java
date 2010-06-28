@@ -26,6 +26,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceException;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.io.FileUtils;
@@ -56,7 +57,7 @@ public class City extends Model {
     public String postalCode;
 
     @Column(length = 38)
-    @Field
+    @Field(sortable = true)
     public String name;
 
     public City() {
@@ -194,4 +195,5 @@ public class City extends Model {
     public String toString() {
         return this.name + " " + this.postalCode + " ( insee: " + this.inseeCode + " )";
     }
+
 }
