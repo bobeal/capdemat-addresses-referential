@@ -133,13 +133,13 @@ public class Imports extends Admin {
             }
 
             i++;
-            if (i % 10000 == 0) {
+            if (i % 1000 == 0) {
                 Long newCurrent = new Date().getTime();
                 period = newCurrent - current;
                 current = newCurrent;
                 total = current - startDate.getTime();
                 Logger.info("---- %d processed rows :", i);
-                Logger.info("Period : %s", period / 1000);
+                Logger.info("Period : %s sec", period / 1000);
                 Logger.info("Current : %s (%s sec)", JavaExtensions.since(startDate).replace("ego",""), total / 1000);
             }
             if (limit != null && i > limit) {
