@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +32,7 @@ import play.data.validation.Required;
 import play.data.validation.Validation;
 import play.libs.Codec;
 import play.mvc.Controller;
+import play.templates.JavaExtensions;
 
 public class Imports extends Admin {
 
@@ -71,15 +73,27 @@ public class Imports extends Admin {
         Imports.index();
     }
 
-    public static void mediapost(Long limit) throws FileNotFoundException, IOException {
+    public static void mediapost(Long offset, Long limit, boolean clear) throws FileNotFoundException, IOException {
+        if(clear == true) {
+            Way.deleteAll();
+            City.deleteAll();
+        }
         File mediapostFile = Play.getFile("data/hffvnn85.tri");
         Referential referential = Referential.find("code=?","HEXAVIA").first();
         if(referential == null) referential = new Referential("HEXAVIA","Hexavia").save();
         BufferedReader mediapostBr = new BufferedReader(new FileReader(mediapostFile));
         String line;
-        int i = 0, ignoredCities = 0;
+        Long i = 0L, ignoredCities = 0L;
         City currentCity = null;
+        Date startDate = new Date();
+        Long period = 0L;
+        Long current = startDate.getTime();
+        Long total = 0L;
         while ((line = mediapostBr.readLine()) != null) {
+            if( offset != null && offset < i) {
+                i++;
+                continue;
+            }
 
             // Voies
             if (currentCity != null && line.substring(0, 1).equals("V")) {
@@ -119,8 +133,14 @@ public class Imports extends Admin {
             }
 
             i++;
-            if (i % 1000 == 0) {
-                Logger.info("%d processed rows...", i);
+            if (i % 10000 == 0) {
+                Long newCurrent = new Date().getTime();
+                period = newCurrent - current;
+                current = newCurrent;
+                total = current - startDate.getTime();
+                Logger.info("---- %d processed rows :", i);
+                Logger.info("Period : %s", period / 1000);
+                Logger.info("Current : %s (%s sec)", JavaExtensions.since(startDate).replace("ego",""), total / 1000);
             }
             if (limit != null && i > limit) {
                 break;
