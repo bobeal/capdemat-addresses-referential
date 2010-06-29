@@ -12,10 +12,12 @@ POST    /imports                                admin.Imports.upload
 GET     /imports/mediapost                      admin.Imports.mediapost
 GET     /imports/{importId}/logs                admin.Imports.logs
 
-POST    /ways                                   WayServices.create
-GET     /ways/{wayId}                           WayServices.read
-PUT     /ways/{wayId}                           WayServices.update
-DELETE  /ways/{wayId}                           WayServices.delete
+POST    /referentials/{referentialCode}/ways            WayServices.create
+GET     /referentials/{referentialCode}/ways/{wayId}    WayServices.read
+PUT     /referentials/{referentialCode}/ways/{wayId}    WayServices.update
+DELETE  /referentials/{referentialCode}/ways/{wayId}    WayServices.delete
+
+GET     /tests/ways                             ServiceTests.wayServices
 
 GET     /exports/cities-{referentialCode}.csv   admin.Exports.citiesCSV
 GET     /exports/ways-{referentialCode}.csv     admin.Exports.waysCSV

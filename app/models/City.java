@@ -162,7 +162,7 @@ public class City extends Model {
                 }
             }
             Logger.debug("%s", luceneQuery);
-            List<Long> cityIds = Search.search(luceneQuery, City.class).orderBy("name").page(0, 10).fetchIds();
+            List<Long> cityIds = Search.search(luceneQuery, City.class).page(0, 10).fetchIds();
             List<City> cities = new ArrayList<City>();
             if(cityIds.size() > 0) {
                 cities = City.find("id in (?1) order by name", cityIds).fetch();

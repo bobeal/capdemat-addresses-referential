@@ -196,10 +196,11 @@ public class Way extends Model {
 
     public Map<String, Object> toJsonMap() {
         Map<String, Object> jsonMap = new HashMap<String, Object>();
+        if (this.id != null) jsonMap.put("id", this.id);
         jsonMap.put("cityInseeCode", this.cityInseeCode);
         jsonMap.put("name", this.name);
-        if(this.matriculation != null) jsonMap.put("matriculation", this.matriculation);
-        if(this.rivoliCode != null) jsonMap.put("inseeCode", this.rivoliCode);
+        if (this.matriculation != null) jsonMap.put("matriculation", this.matriculation);
+        if (this.rivoliCode != null) jsonMap.put("inseeCode", this.rivoliCode);
         if (this.synonymMatricualtion != null) jsonMap.put("synonymMatriculation", this.synonymMatricualtion);
         if (this.synonymRivoliCode != null) jsonMap.put("synonymRivoliCode", this.synonymRivoliCode);
         return jsonMap;

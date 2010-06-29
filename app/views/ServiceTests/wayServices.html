@@ -1,0 +1,84 @@
+#{extends 'ServiceTests/layout.html' /}
+
+#{set 'moreScripts'}
+<script type="text/javascript">
+
+var action_createWay = #{jsAction @WayServices.create(':referentialCode') /}
+var action_readWay = #{jsAction @WayServices.read(':referentialCode',':wayId') /}
+var action_updateWay = #{jsAction @WayServices.update(':referentialCode',':wayId') /}
+var action_deleteWay = #{jsAction @WayServices.delete(':referentialCode',':wayId') /}
+
+var createWay = function(referentialCode, data) {
+  $.ajax({
+    type: "post",
+    url: action_createWay({referentialCode: referentialCode}),
+    data: data,
+    dataType: "json",
+    success: function(data) {
+      id = data;
+    },
+    async: false
+  });
+  return id;
+};
+
+var readWay = function(referentialCode, id) {
+  var result = null;
+  $.ajax({
+    type: "get",
+    url: action_readWay({referentialCode: referentialCode, wayId: id}),
+    dataType: "json",
+    success: function(data) {
+      result = data;
+    },
+    async: false
+  });
+  return result;
+};
+
+var updateWay = function(referentialCode, id, data) {
+  var state = false;
+  $.ajax({
+    type: "put",
+    url: action_updateWay({referentialCode: referentialCode, wayId: id}),
+    data: data,
+    dataType: "json",
+    success: function() {
+      state = true;
+    },
+    async: false
+  });
+  return state;
+};
+
+var deleteWay = function(referentialCode, id) {
+  var state = false;
+  $.ajax({
+    type: "delete",
+    url: action_deleteWay({referentialCode: referentialCode, wayId: id}),
+    data: data,
+    dataType: "json",
+    success: function() {
+      state = true;
+    },
+    async: false
+  });
+  return state;
+};
+
+var way1 = {
+  "way.cityInseeCode": "94059",
+  "way.name": "AVENUE ARDOUIN",
+  "way.matriculation": "12341234"
+};
+
+$().ready(function() {
+  test("createSimple", function() {
+    var way = createWay("HEXAVIA", way1);
+    ok(way.id != null, "Create way");
+    var result = readWay("HEXAVIA", way.id);
+    equals(way.name, result.name, "Way well created");
+  });
+});
+</script>
+#{/set}

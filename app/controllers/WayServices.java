@@ -37,7 +37,7 @@ public class WayServices extends Controller {
 
     @Before
     public static void referentialLoad() {
-        String referentialCode = params.get("referential.code");
+        String referentialCode = params.get("referentialCode");
         notFoundJSONIfNull(referentialCode, "referential.notFound");
         Referential referential = Referential.findByCode(referentialCode);
         notFoundJSONIfNull(referential, "referential.notFound");
