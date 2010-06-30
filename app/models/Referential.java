@@ -30,13 +30,13 @@ public class Referential extends Model {
         this.name = name;
     }
 
+    public static Referential findByCode(String referentialCode) {
+        return find("code = ?", referentialCode).first();
+    }
+
     @Override
     public String toString() {
         return this.code + " ( " + this.name + " )";
-    }
-
-    public static Referential findByCode(String referentialCode) {
-        return find("code = ?", referentialCode).first();
     }
 
 }

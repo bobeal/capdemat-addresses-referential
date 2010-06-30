@@ -17,11 +17,16 @@ public class Services extends Controller{
             renderJSON("{message: \"The parameter 'token' is required.\"}");
         }
         Logger.debug("Token: %s, IP: %s", token, IP);
-        AccessControl ac = AccessControl.find("IP=? and token=? and expirationDate > ?", IP, token, new Date()).first();
-        if(ac==null) {
+        AccessControl accessControl = AccessControl.find("IP=? and token=? and expirationDate > ?", IP, token, new Date()).first();
+        if(accessControl == null) {
             response.status = 400;
             renderJSON("{message: \"The token is not valid for this IP.\"}");
         }
+        renderArgs.put("accessControl", accessControl);
+    }
+
+    static AccessControl getAccessControl() {
+        return (AccessControl) renderArgs.get("accessControl");
     }
 
     public static void tokenValidity() {

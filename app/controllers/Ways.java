@@ -1,6 +1,8 @@
 package controllers;
 
 import java.util.List;
+
+import models.AccessControl;
 import models.Way;
 import play.mvc.Controller;
 import java.util.Date;
@@ -14,7 +16,8 @@ public class Ways extends Services {
             renderJSON("{message: \"Parameters 'city' and 'search' are required.\"}");
         }
         Date start = new Date();
-        List<Way> ways = Way.search(city, search);
+        String referentialCode = getAccessControl().referential.code;
+        List<Way> ways = Way.search(referentialCode, city, search);
         Logger.debug("%s ms", new Date().getTime() - start.getTime());
         String jsonResult = Way.toJson(ways);
         if (callback != null) {

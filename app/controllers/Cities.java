@@ -14,7 +14,8 @@ public class Cities extends Services {
             renderJSON("{message: \"The parameter 'search' is required.\"}");
         }
         Date start = new Date();
-        List<City> cities = City.search(search, postalCode != null ? postalCode : false);
+        String referentialCode = getAccessControl().referential.code;
+        List<City> cities = City.search(referentialCode, search, postalCode != null ? postalCode : false);
         Logger.debug("%s ms", new Date().getTime() - start.getTime());
         String jsonResult = City.toJson(cities);
         if (callback != null) {

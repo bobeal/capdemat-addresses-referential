@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 import play.data.validation.MinSize;
 import play.data.validation.Required;
@@ -30,6 +29,10 @@ public class AccessControl extends Model {
     public String domainName;
 
     public Date expirationDate;
+
+    @Required
+    @ManyToOne
+    public Referential referential;
 
     @Override
     public String toString() {

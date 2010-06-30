@@ -125,13 +125,17 @@ public class City extends Model {
         return find("referential = ? and inseeCode = ?", city.referential, city.inseeCode).first() != null;
     }
 
-    public static List<City> search(String search, Boolean postalCode) {
+    public static List<City> search(String referentialCode, String search, Boolean postalCode) {
+        if(referentialCode == null || referentialCode.length() == 0) {
+            return new ArrayList<City>();
+        }
+        String queryReferential = "referential:" + referentialCode;
         String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").trim();
         if (cleanSearch.length() < 1) {
             return new ArrayList<City>();
         }
         if (postalCode) {
-            return Search.search("postalCode:" + cleanSearch + " OR postalCode:" + cleanSearch + "*", City.class).orderBy("postalCode").page(0, 10).fetch();
+            return Search.search(queryReferential + " AND (postalCode:" + cleanSearch + " OR postalCode:" + cleanSearch + "*)", City.class).orderBy("postalCode").page(0, 10).fetch();
         } else {
             String luceneQuery = "name:\"" + cleanSearch + "\"";
             if (cleanSearch.length() > 0) {
@@ -162,7 +166,7 @@ public class City extends Model {
                 }
             }
             Logger.debug("%s", luceneQuery);
-            List<Long> cityIds = Search.search(luceneQuery, City.class).page(0, 10).fetchIds();
+            List<Long> cityIds = Search.search(queryReferential + " AND (" + luceneQuery + ")", City.class).page(0, 10).fetchIds();
             List<City> cities = new ArrayList<City>();
             if(cityIds.size() > 0) {
                 cities = City.find("id in (?1) order by name", cityIds).fetch();

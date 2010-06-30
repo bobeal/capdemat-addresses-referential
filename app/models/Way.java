@@ -148,7 +148,11 @@ public class Way extends Model {
         else return find("referential = ? and rivoliCode = ?", way.referential, way.rivoliCode).first() != null;
     }
 
-    public static List<Way> search(String city, String search) {
+    public static List<Way> search(String referentialCode, String city, String search) {
+        if(referentialCode == null || referentialCode.length() == 0) {
+            return new ArrayList<Way>();
+        }
+        String queryReferential = "referential:" + referentialCode;
         String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").replace("-", " ").trim();
         if (cleanSearch.length() <= 1) {
             return new ArrayList<Way>();
@@ -178,7 +182,7 @@ public class Way extends Model {
         }
         luceneQuery += ")";
         Logger.debug("%s", luceneQuery);
-        List<Long> wayIds = Search.search(luceneQuery, Way.class).page(0, 10).fetchIds();
+        List<Long> wayIds = Search.search(queryReferential + " AND (" + luceneQuery + ")", Way.class).page(0, 10).fetchIds();
         List<Way> ways = new ArrayList<Way>();
         if(wayIds.size() > 0) {
             ways = Way.find("id in (?1)", wayIds).fetch();
@@ -200,7 +204,7 @@ public class Way extends Model {
         jsonMap.put("cityInseeCode", this.cityInseeCode);
         jsonMap.put("name", this.name);
         if (this.matriculation != null) jsonMap.put("matriculation", this.matriculation);
-        if (this.rivoliCode != null) jsonMap.put("inseeCode", this.rivoliCode);
+        if (this.rivoliCode != null) jsonMap.put("rivoliCode", this.rivoliCode);
         if (this.synonymMatricualtion != null) jsonMap.put("synonymMatriculation", this.synonymMatricualtion);
         if (this.synonymRivoliCode != null) jsonMap.put("synonymRivoliCode", this.synonymRivoliCode);
         return jsonMap;
