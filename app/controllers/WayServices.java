@@ -63,11 +63,8 @@ public class WayServices extends Controller {
     public static void update(String referentialCode, Long wayId, @Valid Way way) {
         Way dbWay = Way.findById(wayId);
         notFoundJSONIfNull(dbWay, "way.notFound");
-        Validation.required("way.referential", way);
+        way.referential = getReferential();
         dbWay.edit("way", params);
-        if(dbWay.referential == null || !dbWay.referential.equals(getReferential())) {
-           Validation.addError("way.referential", "way.wrongReferential");
-        }
         validationJSON();
         dbWay.save();
     }

@@ -56,7 +56,6 @@ var deleteWay = function(referentialCode, id) {
   $.ajax({
     type: "delete",
     url: action_deleteWay({referentialCode: referentialCode, wayId: id}),
-    data: data,
     dataType: "json",
     success: function() {
       state = true;
@@ -66,18 +65,43 @@ var deleteWay = function(referentialCode, id) {
   return state;
 };
 
-var way1 = {
+var way_sample = {
   "way.cityInseeCode": "94059",
   "way.name": "AVENUE ARDOUIN",
   "way.matriculation": "12341234"
 };
 
 $().ready(function() {
-  test("createSimple", function() {
-    var way = createWay("HEXAVIA", way1);
+
+  test("To create a Way", function() {
+    var way = createWay("HEXAVIA", way_sample);
     ok(way.id != null, "Create way");
     var result = readWay("HEXAVIA", way.id);
     equals(way.name, result.name, "Way well created");
+  });
+
+  test("To update a Way name", function() {
+    var newName = "AVENUE SUPER ARDOUIN";
+    var way_modified = way_sample;
+    way_modified["way.name"] = newName;
+    var way = createWay("HEXAVIA", way_sample);
+    ok(way.id != null, "To create way");
+    var updated = updateWay("HEXAVIA", way.id, way_modified);
+    ok(updated, "To update way");
+    var wayUpdated = readWay("HEXAVIA", way.id);
+    ok(way_sample.name != wayUpdated.name, "Name of old way and updated way are different");
+    equals(newName, wayUpdated.name, "Name of updated way is OK")
+  });
+
+  test("To delete a Way", function() {
+    var way = createWay("HEXAVIA", way_sample);
+    ok(way.id != null, "Create way");
+    var result = readWay("HEXAVIA", way.id);
+    equals(way.name, result.name, "Way well created");
+    var deleted = deleteWay("HEXAVIA", way.id);
+    ok(deleted, "Way well deleted");
+    var result2 = readWay("HEXAVIA", way.id);
+    ok(!result2, "Verification");
   });
 });
 </script>
