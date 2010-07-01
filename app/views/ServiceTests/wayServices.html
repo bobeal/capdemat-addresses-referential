@@ -8,10 +8,10 @@ var action_readWay = #{jsAction @WayServices.read(':referentialCode',':wayId') /
 var action_updateWay = #{jsAction @WayServices.update(':referentialCode',':wayId') /}
 var action_deleteWay = #{jsAction @WayServices.delete(':referentialCode',':wayId') /}
 
-var createWay = function(referentialCode, data) {
+var createWay = function(referential, data) {
   $.ajax({
     type: "post",
-    url: action_createWay({referentialCode: referentialCode}),
+    url: action_createWay({referentialCode: referential.code}) + "?token=" + referential.token,
     data: data,
     dataType: "json",
     success: function(data) {
@@ -22,11 +22,11 @@ var createWay = function(referentialCode, data) {
   return id;
 };
 
-var readWay = function(referentialCode, id) {
+var readWay = function(referential, id) {
   var result = null;
   $.ajax({
     type: "get",
-    url: action_readWay({referentialCode: referentialCode, wayId: id}),
+    url: action_readWay({referentialCode: referential.code, wayId: id}) + "?token=" + referential.token,
     dataType: "json",
     success: function(data) {
       result = data;
@@ -36,11 +36,11 @@ var readWay = function(referentialCode, id) {
   return result;
 };
 
-var updateWay = function(referentialCode, id, data) {
+var updateWay = function(referential, id, data) {
   var state = false;
   $.ajax({
     type: "put",
-    url: action_updateWay({referentialCode: referentialCode, wayId: id}),
+    url: action_updateWay({referentialCode: referential.code, wayId: id}) + "?token=" + referential.token,
     data: data,
     dataType: "json",
     success: function() {
@@ -51,11 +51,11 @@ var updateWay = function(referentialCode, id, data) {
   return state;
 };
 
-var deleteWay = function(referentialCode, id) {
+var deleteWay = function(referential, id) {
   var state = false;
   $.ajax({
     type: "delete",
-    url: action_deleteWay({referentialCode: referentialCode, wayId: id}),
+    url: action_deleteWay({referentialCode: referential.code, wayId: id}) + "?token=" + referential.token,
     dataType: "json",
     success: function() {
       state = true;
@@ -71,37 +71,56 @@ var way_sample = {
   "way.matriculation": "12341234"
 };
 
+var TESTHEX = {
+  code: "TESTHEX",
+  token: "0123456789ABCDEF"
+};
+
+var TESTRIVOLI = {
+  code: "TESTRIVOLI",
+  token: "ABCDEF0123456789"
+};
+
 $().ready(function() {
 
   test("To create a Way", function() {
-    var way = createWay("HEXAVIA", way_sample);
-    ok(way.id != null, "Create way");
-    var result = readWay("HEXAVIA", way.id);
-    equals(way.name, result.name, "Way well created");
+    var way = createWay(TESTHEX, way_sample);
+    ok(way != null, "to create way");
+    var result = readWay(TESTHEX, way.id);
+    equals(way.name, result.name, "way well created");
   });
 
   test("To update a Way name", function() {
     var newName = "AVENUE SUPER ARDOUIN";
     var way_modified = way_sample;
     way_modified["way.name"] = newName;
-    var way = createWay("HEXAVIA", way_sample);
-    ok(way.id != null, "To create way");
-    var updated = updateWay("HEXAVIA", way.id, way_modified);
-    ok(updated, "To update way");
-    var wayUpdated = readWay("HEXAVIA", way.id);
-    ok(way_sample.name != wayUpdated.name, "Name of old way and updated way are different");
-    equals(newName, wayUpdated.name, "Name of updated way is OK")
+    var way = createWay(TESTHEX, way_sample);
+    ok(way.id != null, "to create way");
+    var updated = updateWay(TESTHEX, way.id, way_modified);
+    ok(updated, "to update way");
+    var wayUpdated = readWay(TESTHEX, way.id);
+    ok(way_sample.name != wayUpdated.name, "name of old way and updated way are different");
+    equals(newName, wayUpdated.name, "name of updated way is OK")
   });
 
   test("To delete a Way", function() {
-    var way = createWay("HEXAVIA", way_sample);
-    ok(way.id != null, "Create way");
-    var result = readWay("HEXAVIA", way.id);
+    var way = createWay(TESTHEX, way_sample);
+    ok(way.id != null, "to create way");
+    var result = readWay(TESTHEX, way.id);
     equals(way.name, result.name, "Way well created");
-    var deleted = deleteWay("HEXAVIA", way.id);
-    ok(deleted, "Way well deleted");
-    var result2 = readWay("HEXAVIA", way.id);
-    ok(!result2, "Verification");
+    var deleted = deleteWay(TESTHEX, way.id);
+    ok(deleted, "way well deleted");
+    var result2 = readWay(TESTHEX, way.id);
+    ok(!result2, "verification");
+  });
+
+  test("To create a way with Rivoli code", function() {
+    var way = createWay(TESTRIVOLI, way_sample);
+    ok(way != null, "to create way");
+    var result = readWay(TESTHEX, way.id);
+    ok(!result, "way well created");
+    result = readWay(TESTRIVOLI, way.id);
+    ok(result, "way well created");
   });
 });
 </script>

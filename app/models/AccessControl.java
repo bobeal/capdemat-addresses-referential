@@ -34,6 +34,13 @@ public class AccessControl extends Model {
     @ManyToOne
     public Referential referential;
 
+    @Required
+    public Level level = Level.READ;
+
+    public static enum Level {
+        READ, WRITE
+    }
+
     @Override
     public String toString() {
         return this.domainName + " ( token:" + this.token + ", IP:" + this.IP + " )";

@@ -16,30 +16,14 @@ import play.mvc.With;
 import play.mvc.results.NotFound;
 
 @With(Secure.class)
-public class WayServices extends Controller {
-
-    private static void notFoundJSONIfNull(Object object, String message) {
-        if(object==null) {
-            response.status = 404;
-            renderJSON("{message:\"" + Messages.get(message) + "\"}");
-        }
-    }
-
-    private static void validationJSON() {
-        if(Validation.hasErrors()) {
-            response.status = 400;
-            Map<String, Object> jsonMap = new HashMap<String, Object>();
-            jsonMap.put("message", Messages.get("validErrors"));
-            jsonMap.put("errors", Validation.errors());
-            renderJSON(jsonMap);
-        }
-    }
+public class WayServices extends Services {
 
     @Before
     public static void referentialLoad() {
         String referentialCode = params.get("referentialCode");
         notFoundJSONIfNull(referentialCode, "referential.notFound");
         Referential referential = Referential.findByCode(referentialCode);
+        renderArgs.put("referential", referential);
         notFoundJSONIfNull(referential, "referential.notFound");
     }
 
@@ -48,6 +32,7 @@ public class WayServices extends Controller {
     }
 
     public static void create(String referentialCode, @Valid Way way) {
+        writer();
         validationJSON();
         way.referential = getReferential();
         way.save();
@@ -55,12 +40,13 @@ public class WayServices extends Controller {
     }
 
     public static void read(String referentialCode, Long wayId) {
-        Way way = Way.findById(wayId);
+        Way way = Way.find("referential = ? AND id = ?", getReferential(), wayId).first();
         notFoundJSONIfNull(way, "way.notFound");
         renderJSON(way.toJson());
     }
 
     public static void update(String referentialCode, Long wayId, @Valid Way way) {
+        writer();
         Way dbWay = Way.findById(wayId);
         notFoundJSONIfNull(dbWay, "way.notFound");
         way.referential = getReferential();
@@ -70,6 +56,7 @@ public class WayServices extends Controller {
     }
 
     public static void delete(String referentialCode, Long wayId) {
+        writer();
         Way way = Way.findById(wayId);
         notFoundJSONIfNull(way, "way.notFound");
         way.delete();
