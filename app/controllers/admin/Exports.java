@@ -19,14 +19,19 @@ import play.mvc.Controller;
 public class Exports extends Admin {
 
     public static void citiesCSV(String referentialCode) throws IOException {
-        Logger.debug("regerential : %s", referentialCode);
+        Logger.debug("referential : %s", referentialCode);
         Referential referential = Referential.find("code=?", referentialCode.toUpperCase()).first();
         notFoundIfNull(referential);
+        Play.getFile("data/tmp").mkdirs();
         File tmpFile = Play.getFile("data/tmp/"+Codec.UUID());
         if(!tmpFile.exists()) tmpFile.createNewFile();
         CSVWriter writer = new CSVWriter(new FileWriter(tmpFile));
         List<City> cities = City.find("referential=?", referential).fetch();
         Logger.debug("%d cities", cities.size());
+        String[] header = {
+            "Code INSEE", "Nom", "Code postal"
+        };
+        writer.writeNext(header);
         for(City city : cities) {
             String[] row = {
                 city.inseeCode,
@@ -41,14 +46,20 @@ public class Exports extends Admin {
     }
 
     public static void waysCSV(String referentialCode) throws IOException {
-        Logger.debug("regerential : %s", referentialCode);
+        Logger.debug("referential : %s", referentialCode);
         Referential referential = Referential.find("code=?", referentialCode.toUpperCase()).first();
         notFoundIfNull(referential);
+        Play.getFile("data/tmp").mkdirs();
         File tmpFile = Play.getFile("data/tmp/"+Codec.UUID());
         if(!tmpFile.exists()) tmpFile.createNewFile();
         CSVWriter writer = new CSVWriter(new FileWriter(tmpFile));
         List<Way> ways = Way.find("referential=?", referential).fetch();
         Logger.debug("%d ways", ways.size());
+        String[] header = {
+            "Code INSEE commune", "Matricule", "Code rivoli", "Nom",
+            "Synonyme matricule", "Synonyme rivoli"
+        };
+        writer.writeNext(header);
         for(Way way : ways) {
             String[] row = {
                 way.cityInseeCode,
