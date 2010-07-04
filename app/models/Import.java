@@ -69,6 +69,7 @@ public class Import extends Model {
 
     public void setFile(File file) throws IOException, NoSuchAlgorithmException {
         String storedFileName = Codec.UUID();
+        Play.getFile(path).mkdirs();
         File storedFile = Play.getFile(path + storedFileName);
         storedFile.createNewFile();
         FileUtils.copyFile(file, storedFile);
