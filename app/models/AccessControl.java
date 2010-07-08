@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import org.joda.time.DateTime;
+
 import play.data.validation.MinSize;
 import play.data.validation.Required;
 import play.db.jpa.Model;
@@ -36,6 +38,10 @@ public class AccessControl extends Model {
 
     @Required
     public Level level = Level.READ;
+
+    public AccessControl() {
+        this.expirationDate = new DateTime().plusMonths(1).toDate();
+    }
 
     public static enum Level {
         READ, WRITE

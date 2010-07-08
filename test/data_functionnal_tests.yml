@@ -1,0 +1,21 @@
+Referential(testHexavia):
+  code: TESTHEX
+  name: Test HEXAVIA
+
+Referential(testRivoli):
+  code: TESTRIVOLI
+  name: Test RIVOLI
+
+AccessControl(acHexavia):
+  referential: testHexavia
+  domainName: test.hexavia.fr
+  token: 0123456789ABCDEF
+  IP: 0:0:0:0:0:0:0:1%0
+  level: WRITE
+
+AccessControl(acRivoli):
+  referential: testRivoli
+  domainName: test.rivoli.fr
+  token: ABCDEF0123456789
+  IP: 0:0:0:0:0:0:0:1%0
+  level: WRITE
