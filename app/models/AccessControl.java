@@ -30,6 +30,7 @@ public class AccessControl extends Model {
     @Required
     public String domainName;
 
+    @Required
     public Date expirationDate;
 
     @Required
