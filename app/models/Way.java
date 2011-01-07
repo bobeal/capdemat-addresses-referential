@@ -159,7 +159,7 @@ public class Way extends Model {
         if(referentialCode == null || referentialCode.length() == 0) {
             return new ArrayList<Way>();
         }
-        String queryReferential = "referential:" + referentialCode;
+        String queryReferential = "code:" + referentialCode;
         String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").replace("-", " ").trim();
         if (cleanSearch.length() <= 1) {
             return new ArrayList<Way>();
