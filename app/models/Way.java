@@ -89,17 +89,20 @@ public class Way extends Model {
         synonymMatricualtion = CSVLine[4];
         synonymRivoliCode = CSVLine[5];
 
-        if(cityInseeCode == null || cityInseeCode.length() == 0)
+        if(cityInseeCode == null || cityInseeCode.isEmpty())
             badFormat("way.cityInseeCode.empty");
 
         if(cityInseeCode.length() != 5)
             badFormat("way.cityInseeCode.wrongLength");
 
-        if(matriculation != null && rivoliCode.length() != 0 && matriculation.length() != 8)
+        if(matriculation != null && !matriculation.trim().isEmpty() && matriculation.length() != 8)
             badFormat("way.matriculation.wrongLength");
+        if (matriculation != null && matriculation.trim().isEmpty())
+            matriculation = null;
 
-        if(rivoliCode != null && rivoliCode.length() != 0 && rivoliCode.length() != 10)
-            badFormat("way.rivoliCode.wrongLength");
+        // FIXME : who has seen that a rivoli code has a length of 10 characters ??!
+//        if(rivoliCode != null && !rivoliCode.trim().isEmpty() && rivoliCode.length() != 10)
+//            badFormat("way.rivoliCode.wrongLength");
 
         if((matriculation == null || matriculation.length() == 0) && (rivoliCode == null || rivoliCode.length() == 0))
             badFormat("way.identifier.missing");
@@ -112,9 +115,13 @@ public class Way extends Model {
 
         if(synonymMatricualtion != null && synonymMatricualtion.length() != 8 && synonymMatricualtion.length() != 0)
             badFormat("way.synonymMatriculation.wrongLength");
+        if (synonymMatricualtion != null && synonymMatricualtion.length() == 0)
+            synonymMatricualtion = null;
 
         if(synonymRivoliCode != null && synonymRivoliCode.length() != 10 && synonymRivoliCode.length() != 0)
             badFormat("way.synonymRivoliCode.wrongLength");
+        if (synonymRivoliCode != null && synonymRivoliCode.length() == 0)
+            synonymRivoliCode = null;
     }
 
     public void badFormat(String messageKey) throws BadCSVLineFormatException {
