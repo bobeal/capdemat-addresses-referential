@@ -129,7 +129,7 @@ public class City extends Model {
         if(referentialCode == null || referentialCode.length() == 0) {
             return new ArrayList<City>();
         }
-        String queryReferential = "referential:" + referentialCode;
+        String queryReferential = "code:" + referentialCode;
         String cleanSearch = JavaExtensions.noAccents(search).toUpperCase().replace("'", " ").trim();
         if (cleanSearch.length() < 1) {
             return new ArrayList<City>();
