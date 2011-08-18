@@ -52,19 +52,19 @@ public class Way extends Model {
     public String name;
 
     @Column(length = 10)
-    @Length(min=10, max=10)
+//    @Length(min=10, max=10)
     public String rivoliCode;
 
     @Column(length = 8)
-    @Length(min=8, max=8)
+//    @Length(min=8, max=8)
     public String matriculation;
 
     @Column(length = 8, nullable = true)
-    @Length(min=8, max=8)
+//    @Length(min=8, max=8)
     public String synonymMatricualtion = null;
 
     @Column(length = 10, nullable = true)
-    @Length(min=10, max=10)
+//    @Length(min=10, max=10)
     public String synonymRivoliCode = null;
 
     public Way() {
