@@ -152,7 +152,7 @@ public class Way extends Model {
 
     private static boolean exists(Way way) {
         if(way.matriculation != null) return find("referential = ? and matriculation = ?", way.referential, way.matriculation).first() != null;
-        else return find("referential = ? and rivoliCode = ?", way.referential, way.rivoliCode).first() != null;
+        else return find("referential = ? and cityInseeCode = ? and rivoliCode = ?", way.referential, way.cityInseeCode, way.rivoliCode).first() != null;
     }
 
     public static List<Way> search(String referentialCode, String city, String search) {
