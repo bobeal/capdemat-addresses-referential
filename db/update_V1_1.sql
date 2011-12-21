@@ -10,7 +10,7 @@ alter table city add constraint fk_referential_city foreign key (referential_id)
 alter table way add constraint fk_referential_way foreign key (referential_id) references referential (id) match simple on update cascade on delete cascade;
 alter table import add constraint fk_referential_import foreign key (referential_id) references referential (id) match simple on update cascade on delete cascade;
 alter table accesscontrol add constraint fk_referential_accesscontrol foreign key (referential_id) references referential (id) match simple on update cascade on delete cascade;
-alter table importlog add constraint fk_referential_importlog foreign key (referential_id) references referential (id) match simple on update cascade on delete cascade;
+alter table importlog add constraint fk_referential_importlog foreign key (importentity_id) references import (id) match simple on update cascade on delete cascade;
 alter table accesscontrol add constraint fk_customer_accesscontrol foreign key (customer_id) references customer (id) match simple on update cascade on delete cascade;
 alter table expirationnotification add constraint fk_accesscontrol_expirationnotification foreign key (accesscontrol_id) references accesscontrol (id) match simple on update cascade on delete cascade;
 
