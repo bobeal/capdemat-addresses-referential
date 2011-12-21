@@ -31,11 +31,14 @@ public class ImportLog extends Model {
 
     public String jsonObject;
 
-    public ImportLog(Import currentImport, Error error, String messageKey, String jsonObject) {
+    public Long line;
+
+    public ImportLog(Import currentImport, Error error, String messageKey, String jsonObject, Long line) {
         this.importEntity = currentImport;
         this.error = error;
         this.messageKey = messageKey;
         this.jsonObject = jsonObject;
+        this.line = line;
     }
 
     public String getMessage() {

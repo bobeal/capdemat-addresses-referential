@@ -100,7 +100,7 @@ public class Import extends Model {
     }
 
     public void log(ImportLog.Error error, String message, String jsonObject) {
-        new ImportLog(this, error, message, jsonObject).save();
+        new ImportLog(this, error, message, jsonObject, importLine).save();
     }
 
     public static Import findFirstInQueue() {

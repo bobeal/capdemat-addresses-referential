@@ -28,3 +28,5 @@ way.synonymRivoliCode.wrongLength=The synonym rivoli code isn't equals to 10
 referential.notFound=The referential was not found
 way.notFound=The way was not found
 way.wrongReferential=The referential is not correct
+
+import.logs.line=Ligne

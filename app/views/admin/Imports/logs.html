@@ -16,7 +16,8 @@
       </caption>
       <thead>
         <tr>
-          <th class="message">Message</th>
+          <th>&{'import.logs.line'}</th>
+          <th>Message</th>
           <th class="type">Type</th>
           <th class="date">Date</th>
         </tr>
@@ -24,7 +25,8 @@
       <tbody>
         #{list items:currentImport.logs, as:'log'}
         <tr>
-          <td class="message">&{log.messageKey}</td>
+          <td>${log.line}</td>
+          <td>&{log.messageKey}</td>
           <td class="type">${log.error}</td>
           <td class="date">${log.logDate.format("HH:mm dd/MM/yyyy")}</td>
         </tr>
