@@ -48,15 +48,12 @@ public class Imports extends Admin {
         render(currentImport);
     }
 
-    public static void upload(@Required Long referentialId, @Required Import.Type importType, @Required File csvFile) throws IOException, NoSuchAlgorithmException {
+    public static void upload(@Required Long referentialId, @Required Import.Type importType, @Required File csvFile, @Required boolean testMode) throws IOException, NoSuchAlgorithmException {
         Referential referential = null;
         if(!Validation.hasErrors()) {
             referential = Referential.findById(referentialId);
             if(referential == null) {
                 Validation.addError("referentialId", "validation.required");
-            }
-            if(Import.fileExists(csvFile)) {
-                Validation.addError("csvFile", "validation.fileExists");
             }
         }
         if(Validation.hasErrors()) {
@@ -64,7 +61,7 @@ public class Imports extends Admin {
             Validation.keep();
             Imports.index();
         }
-        Import currentImport = Import.queue(referential, csvFile, importType);
+        Import currentImport = Import.queue(referential, csvFile, importType, testMode);
         if(currentImport == null) {
             flash.put("error", "import.nok");
             Imports.index();

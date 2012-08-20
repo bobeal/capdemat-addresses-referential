@@ -55,6 +55,9 @@ public class Import extends Model {
     @Transient
     public File file;
 
+    
+    public Boolean test;
+
     public Date depositDate = new Date();
     public Date importStart = null;
     public Date importStop = null;
@@ -79,11 +82,12 @@ public class Import extends Model {
         this.fileHash = hashFile(file);
     }
 
-    public static Import queue(Referential referential, File csvFile, Type type) throws IOException {
+    public static Import queue(Referential referential, File csvFile, Type type, Boolean testMode) throws IOException {
         Import currentImport = new Import();
         currentImport.type = type;
         currentImport.referential = referential;
         currentImport.file = csvFile;
+        currentImport.test=testMode;
         currentImport.save();
         return currentImport;
     }

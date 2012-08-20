@@ -22,6 +22,7 @@ import org.hibernate.validator.Length;
 
 import play.data.validation.Equals;
 import play.data.validation.Required;
+import play.db.jpa.JPA;
 import play.db.jpa.Model;
 import play.i18n.Messages;
 import play.modules.search.Field;
@@ -133,16 +134,28 @@ public class Way extends Model {
         String [] nextLine;
         for (int i = 0; (nextLine = referentialReader.readNext()) != null; i++) {
             if(i < currentImport.importLine) continue;
-            if(i > 0 && (i % 100 == 0)) Import.em().flush();
+            if(i > 0 && (i % 100 == 0)) {
+                Logger.info("Commit Transaction at rows : %d", i);
+                JPA.em().getTransaction().commit();
+                JPA.em().getTransaction().begin();
+            }
             currentImport.importLine++;
             currentImport.save();
             try {
-                Way way = new Way(currentImport.referential, nextLine);
-                if(!exists(way)) {
-                    way.save();
+                Way newWay = new Way(currentImport.referential, nextLine);
+                Way way = findWay(newWay);
+                if(way==null) {
+                    if(!currentImport.test){
+                        newWay.save();
+                    }
                 }
                 else {
-                    currentImport.alreadyExists(way.toJson());
+                    if(!way.name.equals(newWay.name)){
+                         way.name = newWay.name;
+                         if(!currentImport.test){
+                             way.save();
+                         }
+                    }
                 }
             } catch (BadCSVLineFormatException e) {
                 currentImport.badFormat(e.messageKey, e.jsonObject);
@@ -150,9 +163,9 @@ public class Way extends Model {
         }
     }
 
-    private static boolean exists(Way way) {
-        if(way.matriculation != null) return find("referential = ? and matriculation = ?", way.referential, way.matriculation).first() != null;
-        else return find("referential = ? and cityInseeCode = ? and rivoliCode = ?", way.referential, way.cityInseeCode, way.rivoliCode).first() != null;
+    private static Way findWay(Way way) {
+        if(way.matriculation != null) return find("referential = ? and matriculation = ?", way.referential, way.matriculation).first();
+        else return find("referential = ? and cityInseeCode = ? and rivoliCode = ?", way.referential, way.cityInseeCode, way.rivoliCode).first();
     }
 
     public static List<Way> search(String referentialCode, String city, String search) {

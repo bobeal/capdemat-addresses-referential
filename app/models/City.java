@@ -33,6 +33,7 @@ import org.apache.commons.io.FileUtils;
 import org.hibernate.lob.ReaderInputStream;
 
 import play.Logger;
+import play.db.jpa.JPA;
 import play.db.jpa.Model;
 import play.i18n.Messages;
 import play.modules.search.Field;
@@ -104,25 +105,34 @@ public class City extends Model {
         String [] nextLine;
         for (int i = 0; (nextLine = referentialReader.readNext()) != null; i++) {
             if(i < currentImport.importLine) continue;
-            if(i > 0 && (i % 100 == 0)) Import.em().flush();
+            if(i > 0 && (i % 100 == 0)) {
+                Logger.info("Commit Transaction at rows : %d", i);
+                JPA.em().getTransaction().commit();
+                JPA.em().getTransaction().begin();
+            }
             currentImport.importLine++;
             currentImport.save();
             try {
-                City city = new City(currentImport.referential, nextLine);
-                if(!City.exists(city)) {
-                    city.save();
+                City newCity = new City(currentImport.referential, nextLine);
+                City city = find("referential = ? and inseeCode = ?", newCity.referential, newCity.inseeCode).first();
+                if(city==null) {
+                    if(!currentImport.test){
+                        newCity.save();
+                    }
                 }
                 else {
-                    currentImport.alreadyExists(city.toJson());
+                    if((!city.name.equals(newCity.name)) || (!city.postalCode.equals(newCity.postalCode))){
+                        city.name = newCity.name;
+                        city.postalCode = newCity.postalCode;
+                        if(!currentImport.test){
+                            city.save();
+                        }
+                    }
                 }
             } catch (BadCSVLineFormatException e) {
                 currentImport.badFormat(e.messageKey, e.jsonObject);
             }
         }
-    }
-
-    private static boolean exists(City city) {
-        return find("referential = ? and inseeCode = ?", city.referential, city.inseeCode).first() != null;
     }
 
     public static List<City> search(String referentialCode, String search, Boolean postalCode) {
