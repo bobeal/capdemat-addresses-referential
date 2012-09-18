@@ -11,7 +11,7 @@ import play.Logger;
 public class Ways extends Services {
 
     public static void search(String callback, String city, String search) {
-        if (city == null || search == null) {
+        if (city == null || search == null || city.trim().equals("") || search.trim().equals("")) {
             response.status = 400;
             renderJSON("{message: \"Parameters 'city' and 'search' are required.\"}");
         }
